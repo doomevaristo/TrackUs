@@ -1,9 +1,12 @@
 package com.marcosevaristo.tcc001.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Sampler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -34,6 +38,7 @@ import java.util.Map;
 
 public class AbaBuscar extends Fragment {
 
+    ListView lView;
     ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     Query queryRef;
     List<ValueEventListener> lEventos = new ArrayList<>();
@@ -45,6 +50,8 @@ public class AbaBuscar extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,50 +67,51 @@ public class AbaBuscar extends Fragment {
 
     private void setupListLinhas(String argBusca) {
         adicionaListeners(argBusca);
-        if(CollectionUtils.isNotEmpty(lLinhas.getlLinhas())) {
-            ListView lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
-            ArrayAdapter<Linha> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
-            lView.setAdapter(adapter);
-        } else {
-            Toast.makeText(getActivity(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
-        }
-        removeListeners();
+
     }
 
     private void adicionaListeners(String arg) {
-        for(TipoCampoBusca umCampo : TipoCampoBusca.values()) {
-            queryRef = FirebaseUtils.getLinhasReference().child(arg).orderByChild(umCampo.getCampo()).equalTo(arg);
-            ValueEventListener evento = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot != null) {
-                        montaLinha(dataSnapshot);
-                    }
+        queryRef = FirebaseUtils.getLinhasReference().child(arg).getRef();
+        ValueEventListener evento = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Linha linha = dataSnapshot.getValue(Linha.class);
+                if(linha != null) {
+                    List<Linha> lLinhasAux = new ArrayList<>();
+                    lLinhasAux.add(linha);
+                    lLinhas.addLinhas(lLinhasAux);
+                    lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
+                    ArrayAdapter<Linha> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
+                    lView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getActivity(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
-                }
 
-                private void montaLinha(DataSnapshot dataSnapshot) {
-                    Iterable<DataSnapshot> iterable = dataSnapshot.getChildren();
-                    Map<String, Object> mapValues = new HashMap<>();
-                    while(iterable.iterator().hasNext()) {
-                        DataSnapshot dataSnapshot1 = iterable.iterator().next();
-                        mapValues.put(dataSnapshot1.getKey(), dataSnapshot1.getValue());
-                    }
-                    if(mapValues.size() > 0) {
-                        List<Linha> lLinhasAux = new ArrayList<>();
-                        lLinhasAux.add(new Linha((List<Carro>) mapValues.get("carros"), (Integer) mapValues.get("numero"),
-                                (String) mapValues.get("titulo"), (String) mapValues.get("subtitulo")));
-                        lLinhas.addLinhas(lLinhasAux);
-                    }
+                /*Iterable<DataSnapshot> iterable = dataSnapshot.getChildren();
+                Map<String, Object> mapValues = new HashMap<>();
+                while(iterable.iterator().hasNext()) {
+                    DataSnapshot dataSnapshot1 = iterable.iterator().next();
+                    mapValues.put(dataSnapshot1.getKey(), dataSnapshot1.getValue());
                 }
-            };
-            lEventos.add(evento);
-            queryRef.addListenerForSingleValueEvent(evento);
-        }
+                if(mapValues.size() > 0) {
+                    List<Linha> lLinhasAux = new ArrayList<>();
+                    lLinhasAux.add(new Linha((List<Carro>) mapValues.get("carros"), (Integer) mapValues.get("numero"),
+                            (String) mapValues.get("titulo"), (String) mapValues.get("subtitulo")));
+                    lLinhas.addLinhas(lLinhasAux);
+                }*/
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        lEventos.add(evento);
+        queryRef.addListenerForSingleValueEvent(evento);
     }
 
     private void removeListeners() {
@@ -127,10 +135,10 @@ public class AbaBuscar extends Fragment {
                     busca.requestFocus();
                     imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
                 } else {
+
                     setupListLinhas(busca.getText().toString());
                     busca.setText("");
                 }
-
             }
         });
     }

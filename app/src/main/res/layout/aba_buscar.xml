@@ -10,7 +10,7 @@
     <ListView
         android:id="@+id/listaLinhas"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/listLinhasHeight"/>
+        android:layout_height="@dimen/listLinhasHeight" />
 
     <EditText
         android:id="@+id/etBusca"

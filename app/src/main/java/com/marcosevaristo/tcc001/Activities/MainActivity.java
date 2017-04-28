@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new AbaBuscar(), getString(R.string.abaBuscar));
         adapter.addFragment(new AbaFavoritos(), getString(R.string.abaFavoritos));
         viewPager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }

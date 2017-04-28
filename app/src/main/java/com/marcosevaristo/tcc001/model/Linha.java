@@ -40,13 +40,21 @@ public class Linha implements View.OnClickListener{
         this.titulo = titulo;
     }
 
-    public String getSubTitulo() {
+    public String getSubtitulo() {
         return subtitulo;
     }
 
-    public void setSubTitulo(String subtitulo) {
+    public void setSubtitulo(String subtitulo) {
         this.subtitulo = subtitulo;
     }
+
+    /*public List<Carro> getCarros() {
+        return carros;
+    }
+
+    public void setCarros(List<Carro> carros) {
+        this.carros = carros;
+    }*/
 
     @Override
     public String toString() {
