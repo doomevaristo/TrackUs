@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.abaBuscar));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.abaFavoritos));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 

@@ -2,6 +2,8 @@ package com.marcosevaristo.tcc001.model;
 
 import android.view.View;
 
+import com.marcosevaristo.tcc001.utils.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,63 +62,60 @@ public class Linha implements View.OnClickListener{
         this.carros = carros;
     }
 
-    public List<Linha> converteMapParaListaLinhas(List<Map> lMapLinhas) {
+    public static List<Linha> converteMapParaListaLinhas(Map lMapLinhas) {
         List<Linha> lLinhas = new ArrayList<>();
-        for(Map umItem : lMapLinhas) {
-            String numeroAux = null;
-            String tituloAux = null;
-            String subTituloAux = null;
-            String location = null;
-            String latitude = null;
-            String longitude = null;
-            String id = null;
-            List<Carro> lCarrosAux = new ArrayList<>();
-            for(Object umaKeyAux : umItem.keySet()) {
-                String umaKey = umaKeyAux.toString();
-                switch(umaKey) {
-                    case "numero":
-                        numeroAux = umItem.get(umaKeyAux).toString();
-                        break;
-                    case "titulo":
-                        tituloAux = umItem.get(umaKeyAux).toString();
-                        break;
-                    case "subtitulo":
-                        subTituloAux = umItem.get(umaKeyAux).toString();
-                        break;
-                    case "carros":
-                        Collection<Map> mapCarros = ((Map) umItem.get(umaKeyAux)).values();
-                        for(Map umCarroMap : mapCarros) {
-                            Collection<Map> atributosColl = umCarroMap.values();
-                            for(Map umAtributo : atributosColl) {
-                                for(Object key : umAtributo.keySet()) {
-                                    String keyStr = key.toString();
-                                    switch(keyStr) {
-                                        case "location":
-                                            location = umAtributo.get(key).toString();
-                                            break;
-                                        case "latitude":
-                                            latitude = umAtributo.get(key).toString();
-                                            break;
-                                        case "longitude":
-                                            longitude = umAtributo.get(key).toString();
-                                            break;
-                                        case "id":
-                                            id = umAtributo.get(key).toString();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                lCarrosAux.add(new Carro(id, longitude, latitude, location));
+        String numeroAux = null;
+        String tituloAux = null;
+        String subTituloAux = null;
+        String location = null;
+        String latitude = null;
+        String longitude = null;
+        String id = null;
+        List<Carro> lCarrosAux = new ArrayList<>();
+        for(Object umaKeyAux : lMapLinhas.keySet()) {
+            String umaKey = umaKeyAux.toString();
+            switch(umaKey) {
+                case "numero":
+                    numeroAux = lMapLinhas.get(umaKeyAux).toString();
+                    break;
+                case "titulo":
+                    tituloAux = lMapLinhas.get(umaKeyAux).toString();
+                    break;
+                case "subtitulo":
+                    subTituloAux = lMapLinhas.get(umaKeyAux).toString();
+                    break;
+                case "carros":
+                    Collection<Map> mapCarros = ((Map) lMapLinhas.get(umaKeyAux)).values();
+                    for(Map umCarroMap : mapCarros) {
+                        for(Object umKey : umCarroMap.keySet()) {
+                            String umKeyStr = umKey.toString();
+                            switch (umKeyStr) {
+                                case "location":
+                                    location = umCarroMap.get(umKey).toString();
+                                    break;
+                                case "latitude":
+                                    latitude = umCarroMap.get(umKey).toString();
+                                    break;
+                                case "longitude":
+                                    longitude = umCarroMap.get(umKey).toString();
+                                    break;
+                                case "id":
+                                    id = umCarroMap.get(umKey).toString();
+                                    break;
+                                default:
+                                    break;
                             }
                         }
-                        break;
-                    default:
-                        break;
-                }
+                        lCarrosAux.add(new Carro(id, longitude, latitude, location));
+                    }
+                    break;
+                default:
+                    break;
             }
-            lLinhas.add(new Linha(lCarrosAux, numeroAux, tituloAux, subTituloAux));
         }
+        Linha linhaAux = new Linha(lCarrosAux, numeroAux, tituloAux, subTituloAux);
+        linhaAux.setCarros(lCarrosAux);
+        lLinhas.add(linhaAux);
         return lLinhas;
     }
 

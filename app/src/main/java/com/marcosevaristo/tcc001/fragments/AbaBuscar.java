@@ -51,10 +51,6 @@ public class AbaBuscar extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aba_buscar, container, false);
         setupFloatingActionButton(view);
-        if(getArguments() != null && getArguments().size() > 0) {
-            String argBusca = getArguments().getString("argBusca");
-            setupListLinhas(argBusca);
-        }
         return view;
     }
 
@@ -68,41 +64,21 @@ public class AbaBuscar extends Fragment {
         ValueEventListener evento = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Map> mapValues = (List<Map>) dataSnapshot.getValue();
+                Map mapValues = (Map) dataSnapshot.getValue();
                 if(mapValues != null) {
-                    listToMap(mapValues);
-
+                    lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
+                    adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
                     lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
                     adapter.notifyDataSetChanged();
+                    lView.setAdapter(adapter);
                 } else {
                     Toast.makeText(getActivity(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
-
-                /*Iterable<DataSnapshot> iterable = dataSnapshot.getChildren();
-                Map<String, Object> mapValues = new HashMap<>();
-                while(iterable.iterator().hasNext()) {
-                    DataSnapshot dataSnapshot1 = iterable.iterator().next();
-                    mapValues.put(dataSnapshot1.getKey(), dataSnapshot1.getValue());
-                }
-                if(mapValues.size() > 0) {
-                    List<Linha> lLinhasAux = new ArrayList<>();
-                    lLinhasAux.add(new Linha((List<Carro>) mapValues.get("carros"), (Integer) mapValues.get("numero"),
-                            (String) mapValues.get("titulo"), (String) mapValues.get("subtitulo")));
-                    lLinhas.addLinhas(lLinhasAux);
-                }*/
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
-            }
-
-            private void listToMap(List<Map> mapValues) {
-                List<Linha> lLinhasAux = new ArrayList<>();
-                //lLinhasAux.add(linha);
-                lLinhas.addLinhas(lLinhasAux);
-                adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
-                lView.setAdapter(adapter);
             }
         };
 
@@ -131,7 +107,6 @@ public class AbaBuscar extends Fragment {
                     busca.requestFocus();
                     imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
                 } else {
-
                     setupListLinhas(busca.getText().toString());
                     busca.setText("");
                 }
