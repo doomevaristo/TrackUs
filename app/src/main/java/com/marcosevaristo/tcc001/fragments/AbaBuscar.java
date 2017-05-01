@@ -1,12 +1,9 @@
-package com.marcosevaristo.tcc001.Activities;
+package com.marcosevaristo.tcc001.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Sampler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +13,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.marcosevaristo.tcc001.Enums.TipoCampoBusca;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
-import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +34,7 @@ public class AbaBuscar extends Fragment {
     ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     Query queryRef;
     List<ValueEventListener> lEventos = new ArrayList<>();
+    ArrayAdapter<Linha> adapter;
 
     public AbaBuscar() {
     }
@@ -75,20 +68,15 @@ public class AbaBuscar extends Fragment {
         ValueEventListener evento = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Linha linha = dataSnapshot.getValue(Linha.class);
-                if(linha != null) {
-                    List<Linha> lLinhasAux = new ArrayList<>();
-                    lLinhasAux.add(linha);
-                    lLinhas.addLinhas(lLinhasAux);
+                List<Map> mapValues = (List<Map>) dataSnapshot.getValue();
+                if(mapValues != null) {
+                    listToMap(mapValues);
+
                     lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
-                    ArrayAdapter<Linha> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
-                    lView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(getActivity(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
-
-
 
                 /*Iterable<DataSnapshot> iterable = dataSnapshot.getChildren();
                 Map<String, Object> mapValues = new HashMap<>();
@@ -107,6 +95,14 @@ public class AbaBuscar extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+
+            private void listToMap(List<Map> mapValues) {
+                List<Linha> lLinhasAux = new ArrayList<>();
+                //lLinhasAux.add(linha);
+                lLinhas.addLinhas(lLinhasAux);
+                adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
+                lView.setAdapter(adapter);
             }
         };
 

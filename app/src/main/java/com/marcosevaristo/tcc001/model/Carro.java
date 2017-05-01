@@ -3,11 +3,18 @@ package com.marcosevaristo.tcc001.model;
 public class Carro {
     private String id;
     private Linha linha;
-    private Integer longitude;
-    private Integer latitude;
+    private String longitude;
+    private String latitude;
     private String location;
 
     public Carro() {
+    }
+
+    public Carro(String id, String longitude, String latitude, String location) {
+        this.id = id;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.location = location;
     }
 
     public String getId() {
@@ -26,19 +33,19 @@ public class Carro {
         this.linha = linha;
     }
 
-    public Integer getLongitude() {
+    public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Integer longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public Integer getLatitude() {
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Integer latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 

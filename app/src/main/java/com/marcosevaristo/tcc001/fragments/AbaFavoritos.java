@@ -1,4 +1,4 @@
-package com.marcosevaristo.tcc001.Activities;
+package com.marcosevaristo.tcc001.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

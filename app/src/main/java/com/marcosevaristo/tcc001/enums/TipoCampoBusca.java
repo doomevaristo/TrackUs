@@ -1,4 +1,4 @@
-package com.marcosevaristo.tcc001.Enums;
+package com.marcosevaristo.tcc001.enums;
 
 public enum TipoCampoBusca {
     NUMERO("numero"),

@@ -1,4 +1,4 @@
-package com.marcosevaristo.tcc001.Activities;
+package com.marcosevaristo.tcc001.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,12 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.adapters.Pager;
+import com.marcosevaristo.tcc001.fragments.AbaBuscar;
+import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -28,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUtils.startReferenceLinhas();
         setContentView(R.layout.activity_main);
         setupToolbar();
-        setupViewPager();
+        setupTabLayout();
+        //setupViewPager();
     }
 
     @Override
@@ -46,7 +50,20 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    private void setupViewPager() {
+    private void setupTabLayout() {
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.abaBuscar));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.abaFavoritos));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        Pager adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        tabLayout.addOnTabSelectedListener(this);
+    }
+
+    /*private void setupViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new AbaBuscar(), getString(R.string.abaBuscar));
@@ -55,6 +72,21 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }*/
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
