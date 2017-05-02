@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,10 +32,12 @@ import java.util.Map;
 public class AbaBuscar extends Fragment {
 
     ListView lView;
-    ListaLinhasDTO lLinhas = new ListaLinhasDTO();
-    Query queryRef;
-    List<ValueEventListener> lEventos = new ArrayList<>();
+    Query queryRefNum;
+    Query queryRefTitulo;
     ArrayAdapter<Linha> adapter;
+    ListaLinhasDTO lLinhas = new ListaLinhasDTO();
+    List<ValueEventListener> lEventos = new ArrayList<>();
+    ProgressBar progressBar;
 
     public AbaBuscar() {
     }
@@ -55,44 +58,37 @@ public class AbaBuscar extends Fragment {
     }
 
     private void setupListLinhas(String argBusca) {
-        adicionaListeners(argBusca);
-
-    }
-
-    private void adicionaListeners(String arg) {
-        queryRef = FirebaseUtils.getLinhasReference().child(arg).getRef();
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
+        lView.setAdapter(null);
+        queryRefNum = FirebaseUtils.getLinhasReference().child(argBusca).getRef();
+        //queryRefTitulo = FirebaseUtils.getLinhasReference();
         ValueEventListener evento = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map mapValues = (Map) dataSnapshot.getValue();
-                if(mapValues != null) {
+                if (mapValues != null) {
+                    lLinhas = new ListaLinhasDTO();
                     lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
                     adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
-                    lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
                     adapter.notifyDataSetChanged();
                     lView.setAdapter(adapter);
                 } else {
                     Toast.makeText(getActivity(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
             }
         };
 
         lEventos.add(evento);
-        queryRef.addListenerForSingleValueEvent(evento);
-    }
-
-    private void removeListeners() {
-        if(CollectionUtils.isNotEmpty(lEventos)) {
-            for(ValueEventListener umEvento : lEventos) {
-                queryRef.removeEventListener(umEvento);
-            }
-            lEventos = new ArrayList<>();
-        }
+        queryRefNum.addListenerForSingleValueEvent(evento);
+        //queryRefTitulo.addListenerForSingleValueEvent(evento);
     }
 
     private void setupFloatingActionButton(View view) {
@@ -107,8 +103,11 @@ public class AbaBuscar extends Fragment {
                     busca.requestFocus();
                     imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
                 } else {
-                    setupListLinhas(busca.getText().toString());
-                    busca.setText("");
+                    String arg = busca.getText().toString();
+                    if(!arg.equals("")) {
+                        setupListLinhas(busca.getText().toString());
+                        busca.setText("");
+                    }
                 }
             }
         });

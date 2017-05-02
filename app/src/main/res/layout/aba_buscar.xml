@@ -7,16 +7,16 @@
     android:orientation="vertical"
     tools:context="com.marcosevaristo.tcc001.fragments.AbaBuscar">
 
-    <TextView
-        android:id="@+id/app_name_text"
-        android:text="@string/app_name"
+    <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"/>
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@+id/listaLinhas"
-        android:layout_below="@id/app_name_text"
+        android:layout_marginTop="@dimen/marginTopListLinhas"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/listLinhasHeight" />
 
@@ -29,6 +29,8 @@
         android:visibility="gone"
         android:focusable="true"
         android:maxLength="30"
+        android:inputType="number"
+        android:hint="@string/hintBuscar"
         />
 
     <android.support.design.widget.FloatingActionButton
