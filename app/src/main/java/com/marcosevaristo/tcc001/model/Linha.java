@@ -4,17 +4,20 @@ import android.view.View;
 
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Linha implements View.OnClickListener{
+public class Linha implements Serializable {
     private String numero;
     private String titulo;
     private String subtitulo;
     private List<Carro> carros;
+
+    private static final long serialVersionUID = 1L;
 
     public Linha() {
     }
@@ -126,10 +129,5 @@ public class Linha implements View.OnClickListener{
             sb.append(this.subtitulo);
         }
         return sb.toString();
-    }
-
-    @Override
-    public void onClick(View v) {
-
     }
 }

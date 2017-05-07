@@ -1,6 +1,7 @@
 package com.marcosevaristo.tcc001.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -19,11 +21,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +66,16 @@ public class AbaBuscar extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
+        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), Mapa.class);
+                Bundle bundleAux = new Bundle();
+                bundleAux.putSerializable("linha", (Linha)parent.getItemAtPosition(position));
+                intent.putExtras(bundleAux);
+                startActivity(intent);
+            }
+        });
         queryRefNum = FirebaseUtils.getLinhasReference().child(argBusca).getRef();
         //queryRefTitulo = FirebaseUtils.getLinhasReference();
         ValueEventListener evento = new ValueEventListener() {

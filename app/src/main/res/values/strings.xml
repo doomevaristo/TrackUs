@@ -14,5 +14,6 @@
     <string name="title_activity_navigation_drawer">NavigationDrawer</string>
 
     <!-- ALERTS -->
-    <string name="nenhum_resultado">Não foram encontrados resultados na busca.</string>
+    <string name="nenhum_resultado">Não foram encontrados resultados na busca</string>
+    <string name="title_activity_mapa">Mapa</string>
 </resources>

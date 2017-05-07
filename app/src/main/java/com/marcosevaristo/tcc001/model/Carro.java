@@ -1,11 +1,16 @@
 package com.marcosevaristo.tcc001.model;
 
-public class Carro {
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+public class Carro implements Serializable{
     private String id;
-    private Linha linha;
     private String longitude;
     private String latitude;
     private String location;
+
+    private static final long serialVersionUID = 1L;
 
     public Carro() {
     }
@@ -23,14 +28,6 @@ public class Carro {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Linha getLinha() {
-        return linha;
-    }
-
-    public void setLinha(Linha linha) {
-        this.linha = linha;
     }
 
     public String getLongitude() {
@@ -55,5 +52,9 @@ public class Carro {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public List<Carro> converteMapParaListCarros(Map mapCarros) {
+        return null;
     }
 }
