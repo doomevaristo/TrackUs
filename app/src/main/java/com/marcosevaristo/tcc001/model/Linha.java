@@ -26,10 +26,6 @@ public class Linha implements View.OnClickListener{
         this.subtitulo = subtitulo;
     }
 
-    public Linha(String toString) {
-        String aux = toString.substring(0, toString.indexOf("-")-1);
-    }
-
     public String getNumero() {
         return numero;
     }
