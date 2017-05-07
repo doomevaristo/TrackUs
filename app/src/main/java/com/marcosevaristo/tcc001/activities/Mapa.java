@@ -18,6 +18,7 @@ import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
+import java.util.List;
 import java.util.Map;
 
 public class Mapa extends FragmentActivity implements OnMapReadyCallback {
@@ -43,12 +44,6 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
 
     private void setaCarrosNoMapa(Bundle params, GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
         linha = (Linha) params.get("linha");
         if(linha != null) {
             queryRef = FirebaseUtils.getLinhasReference().child(linha.getNumero()).child("carros");
@@ -57,9 +52,9 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Map mapCarros = (Map) dataSnapshot.getValue();
                     if(mapCarros != null) {
-                        for(Object umaKey : mapCarros.keySet()) {
-                            Carro umCarro = (Carro) mapCarros.get(umaKey);
-                            LatLng posicaoUmCarro = new LatLng(Integer.getInteger(umCarro.getLatitude()), Integer.getInteger(umCarro.getLongitude()));
+                        List<Carro> lCarros = Carro.converteMapParaListCarros(mapCarros);
+                        for(Carro umCarro : lCarros) {
+                            LatLng posicaoUmCarro = new LatLng(Double.parseDouble(umCarro.getLatitude()), Double.parseDouble(umCarro.getLongitude()));
                             mMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()));
                         }
                     }

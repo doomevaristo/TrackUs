@@ -1,6 +1,7 @@
 package com.marcosevaristo.tcc001.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,37 @@ public class Carro implements Serializable{
         this.location = location;
     }
 
-    public List<Carro> converteMapParaListCarros(Map mapCarros) {
-        return null;
+    public static List<Carro> converteMapParaListCarros(Map mapCarros) {
+        List<Carro> lCarros = null;
+        String id = null;
+        String longitude = null;
+        String latitude = null;
+        String location = null;
+        if(mapCarros != null && mapCarros.size() > 0) {
+            lCarros = new ArrayList<>();
+            for(Object umCarroId : mapCarros.keySet()) {
+                Map attrs = (Map) mapCarros.get(umCarroId);
+                for(Object umAttr : attrs.keySet()) {
+                    String umAttrStr = umAttr.toString();
+                    switch (umAttrStr) {
+                        case "location":
+                            location = attrs.get(umAttr).toString();
+                            break;
+                        case "latitude":
+                            latitude = attrs.get(umAttr).toString();
+                            break;
+                        case "longitude":
+                            longitude = attrs.get(umAttr).toString();
+                            break;
+                        case "id":
+                            id = attrs.get(umAttr).toString();
+                            break;
+                    }
+                }
+                lCarros.add(new Carro(id, longitude, latitude, location));
+            }
+        }
+
+        return lCarros;
     }
 }
