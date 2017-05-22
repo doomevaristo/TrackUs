@@ -7,6 +7,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -54,8 +55,15 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                     if(mapCarros != null) {
                         List<Carro> lCarros = Carro.converteMapParaListCarros(mapCarros);
                         for(Carro umCarro : lCarros) {
-                            LatLng posicaoUmCarro = new LatLng(Double.parseDouble(umCarro.getLatitude()), Double.parseDouble(umCarro.getLongitude()));
-                            mMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()));
+                            Double latitude = Double.parseDouble(umCarro.getLatitude());
+                            Double longitude = Double.parseDouble(umCarro.getLongitude());
+                            Double latitudeBlumenau = -26.9053897;
+                            Double longitudeBlumenau = -49.0935486;
+                            LatLng posicaoUmCarro = new LatLng(latitude, longitude);
+                            MarkerOptions marker = new MarkerOptions().position(posicaoUmCarro).title(linha.toString());
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
+                            mMap.addMarker(marker);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeBlumenau, longitudeBlumenau), 14.0f));
                         }
                     }
                 }
