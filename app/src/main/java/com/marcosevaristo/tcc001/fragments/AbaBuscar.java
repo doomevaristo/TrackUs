@@ -22,6 +22,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
+import com.marcosevaristo.tcc001.adapters.MyArrayAdapter;
 import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
@@ -38,7 +39,7 @@ public class AbaBuscar extends Fragment {
     ListView lView;
     Query queryRefNum;
     Query queryRefTitulo;
-    ArrayAdapter<Linha> adapter;
+    MyArrayAdapter adapter;
     ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     List<ValueEventListener> lEventos = new ArrayList<>();
     ProgressBar progressBar;
@@ -85,7 +86,7 @@ public class AbaBuscar extends Fragment {
                 if (mapValues != null) {
                     lLinhas = new ListaLinhasDTO();
                     lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
-                    adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lLinhas.getlLinhas());
+                    adapter = new MyArrayAdapter(lLinhas.getArrayListLinhas(), getActivity());
                     adapter.notifyDataSetChanged();
                     lView.setAdapter(adapter);
                 } else {

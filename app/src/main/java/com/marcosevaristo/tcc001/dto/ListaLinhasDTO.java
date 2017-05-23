@@ -26,6 +26,14 @@ public class ListaLinhasDTO {
         return lLinhas;
     }
 
+    public ArrayList<String> getArrayListLinhas() {
+        List<String> lAux = new ArrayList<String>();
+        for(Linha umaLinha : this.getlLinhas()) {
+            lAux.add(umaLinha.toString());
+        }
+        return (ArrayList<String>) lAux;
+    }
+
     /**
      * Retorna a linha da lista que tenha o número ou título informado como argumento. Retorna null se não encontrar.
      * @param arg

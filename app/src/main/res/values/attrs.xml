@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="BotaoFavorito">
+    <attr name="fav_size" format="integer" />
+    <attr name="fav_animate_favorite" format="boolean" />
+    <attr name="fav_animate_unfavorite" format="boolean" />
+    <attr name="fav_padding" format="integer" />
+    <attr name="fav_favorite_image" format="integer" />
+    <attr name="fav_not_favorite_image" format="integer" />
+    <attr name="fav_rotation_duration" format="integer" />
+    <attr name="fav_rotation_angle" format="integer" />
+    <attr name="fav_bounce_duration" format="integer" />
+    <attr name="fav_color" format="enum">
+      <enum name="black" value="0" />
+    </attr>
+    <attr name="fav_type" format="enum">
+      <enum name="star" value="0" />
+      <enum name="heart" value="1" />
+    </attr>
+  </declare-styleable>
+</resources>
