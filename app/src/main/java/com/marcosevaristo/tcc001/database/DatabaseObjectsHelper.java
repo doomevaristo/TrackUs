@@ -12,9 +12,9 @@ public class DatabaseObjectsHelper {
         public static String getCreateEntry(){
             StringBuilder sb = new StringBuilder();
             sb.append("CREATE TABLE ").append(TABLE_NAME);
-            sb.append(" (").append(TFavoritos._ID).append("INTEGER NOT NULL PRIMARY KEY ");
-            sb.append(",").append(COLUMN_LINHA).append("VARCHAR(50) NOT NULL ");
-            sb.append(", FOREIGN KEY (LINHA) REFERENCES ").append(TLinhas.TABLE_NAME).append("(")
+            sb.append(" (").append(TFavoritos._ID).append(" INTEGER NOT NULL PRIMARY KEY ");
+            sb.append(",").append(COLUMN_LINHA).append(" VARCHAR(50) NOT NULL ");
+            sb.append(", FOREIGN KEY (").append(COLUMN_LINHA).append(") REFERENCES ").append(TLinhas.TABLE_NAME).append("(")
                     .append(TLinhas._ID).append(") ON DELETE CASCADE");
             sb.append(")");
             return sb.toString();
@@ -31,18 +31,18 @@ public class DatabaseObjectsHelper {
         public static String getCreateEntry(){
             StringBuilder sb = new StringBuilder();
             sb.append("CREATE TABLE ").append(TABLE_NAME);
-            sb.append(" (").append(TLinhas._ID).append("INTEGER NOT NULL PRIMARY KEY ");
-            sb.append(",").append(COLUMN_NUMERO).append("VARCHAR(25) NOT NULL ");
-            sb.append(",").append(COLUMN_TITULO).append("VARCHAR(255) NOT NULL ");
-            sb.append(",").append(COLUMN_SUBTITULO).append("VARCHAR(600) NULL ");
-            sb.append(",").append(COLUMN_CIDADE).append("INTEGER NOT NULL ");
+            sb.append(" (").append(TLinhas._ID).append(" INTEGER NOT NULL PRIMARY KEY ");
+            sb.append(",").append(COLUMN_NUMERO).append(" VARCHAR(25) NOT NULL ");
+            sb.append(",").append(COLUMN_TITULO).append(" VARCHAR(255) NOT NULL ");
+            sb.append(",").append(COLUMN_SUBTITULO).append(" VARCHAR(600) NULL ");
+            sb.append(",").append(COLUMN_CIDADE).append(" INTEGER NULL ");
             sb.append(")");
             return sb.toString();
         }
 
         public static String getColunasParaSelect() {
             StringBuilder sb = new StringBuilder();
-            sb.append(COLUMN_NUMERO).append(COLUMN_TITULO).append(COLUMN_SUBTITULO).append(COLUMN_CIDADE);
+            sb.append(COLUMN_NUMERO).append(", ").append(COLUMN_TITULO).append(", ").append(COLUMN_SUBTITULO).append(", ").append(COLUMN_CIDADE);
             return sb.toString();
         }
     }

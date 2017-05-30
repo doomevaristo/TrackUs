@@ -29,13 +29,15 @@ public class AbaFavoritos extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.aba_favoritos, container, false);
+        View view = inflater.inflate(R.layout.aba_favoritos, container, false);
+        setupListLinhas(view);
+        return view;
     }
 
-    private void setupListLinhas() {
-        lView = (ListView) getActivity().findViewById(R.id.listaLinhasFavoritas);
+    private void setupListLinhas(View view) {
+        lView = (ListView) view.findViewById(R.id.listaLinhasFavoritas);
         lLinhas = new ListaLinhasDTO();
-        lLinhas.addLinhas(QueryBuilder.getFavoritos());
+        lLinhas.addLinhas(QueryBuilder.getFavoritos(null));
         adapter = new LinhasAdapter(App.getAppContext(), R.layout.item_dos_favoritos, lLinhas.getlLinhas());
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);

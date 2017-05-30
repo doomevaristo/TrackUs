@@ -26,7 +26,7 @@ public class QueryBuilder {
         if(cursor != null) {
             cursor.moveToFirst();
         }
-        while(!cursor.isAfterLast()) {
+        while(cursor.moveToNext()) {
             linhaAux = new Linha();
             linhaAux.setNumero(cursor.getString(0));
             linhaAux.setTitulo(cursor.getString(1));
@@ -41,9 +41,9 @@ public class QueryBuilder {
 
     private static String getSelectAllFavoritos(String nroLinha) {
         StringBuilder sb = new StringBuilder("SELECT ").append(DatabaseObjectsHelper.TLinhas.getColunasParaSelect()).append(" FROM ");
-        sb.append(DatabaseObjectsHelper.TFavoritos.TABLE_NAME);
-        sb.append(" INNER JOIN ").append(DatabaseObjectsHelper.TLinhas.TABLE_NAME).append(" ON ");
-        sb.append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ").append(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA);
+        sb.append(DatabaseObjectsHelper.TFavoritos.TABLE_NAME).append(" FAV ");
+        sb.append(" INNER JOIN ").append(DatabaseObjectsHelper.TLinhas.TABLE_NAME).append(" LINHA ON LINHA.");
+        sb.append(DatabaseObjectsHelper.TLinhas._ID).append(" = FAV.").append(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA);
         if(StringUtils.isNotBlank(nroLinha)) {
             sb.append(" WHERE ").append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" LIKE '%").append(nroLinha).append("%' ");
         }
@@ -58,7 +58,7 @@ public class QueryBuilder {
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO, linha.getNumero());
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_TITULO, linha.getTitulo());
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_SUBTITULO, linha.getSubtitulo());
-        values.put(DatabaseObjectsHelper.TLinhas.COLUMN_CIDADE, linha.getCidade().getId());
+        //values.put(DatabaseObjectsHelper.TLinhas.COLUMN_CIDADE, linha.getCidade().getId());
         Long linhaId = db.insert(DatabaseObjectsHelper.TLinhas.TABLE_NAME, null, values);
 
         values = new ContentValues();
@@ -71,7 +71,7 @@ public class QueryBuilder {
         StringBuilder sbWhere = new StringBuilder();
         sbWhere.append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ?");
 
-        db.delete(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
+        db.delete(DatabaseObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
     }
 
     public Linha getFavorito(String linhaId) {
