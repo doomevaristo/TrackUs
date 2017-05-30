@@ -7,14 +7,15 @@ public class DatabaseObjectsHelper {
 
     public static class TFavoritos implements BaseColumns {
         public static String TABLE_NAME = "TB_FAVORITOS";
-        public static String COLUMN_LINHA = "FAV_NROLINHA";
+        public static String COLUMN_LINHA = "FAV_LINHAID";
 
         public static String getCreateEntry(){
             StringBuilder sb = new StringBuilder();
             sb.append("CREATE TABLE ").append(TABLE_NAME);
             sb.append(" (").append(TFavoritos._ID).append("INTEGER NOT NULL PRIMARY KEY ");
-            sb.append(",").append(COLUMN_LINHA).append("VARCHAR(25) NOT NULL ");
-            sb.append(", FOREIGN KEY (LINHA) REFERENCES ").append(TABLE_NAME).append("(").append(COLUMN_LINHA).append(")");
+            sb.append(",").append(COLUMN_LINHA).append("VARCHAR(50) NOT NULL ");
+            sb.append(", FOREIGN KEY (LINHA) REFERENCES ").append(TLinhas.TABLE_NAME).append("(")
+                    .append(TLinhas._ID).append(") ON DELETE CASCADE");
             sb.append(")");
             return sb.toString();
         }

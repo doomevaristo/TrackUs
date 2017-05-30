@@ -1,15 +1,8 @@
-package com.marcosevaristo.tcc001.utils;
+package com.marcosevaristo.tcc001.database;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.marcosevaristo.tcc001.database.DatabaseObjectsHelper;
-import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.model.Linha;
-
-import java.util.List;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
@@ -40,6 +33,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onOpen(SQLiteDatabase db) {
-
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
     }
 }

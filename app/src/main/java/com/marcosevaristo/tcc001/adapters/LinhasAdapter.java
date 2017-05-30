@@ -70,14 +70,16 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
     private BotaoFavorito setupBotaoFavorito(View view, int posicao) {
        BotaoFavorito botaoFavorito = (BotaoFavorito) view.findViewById(R.id.botaoFavorito);
        if(botaoFavorito != null) {
-           botaoFavorito.setFavorite(true, true);
+
+           botaoFavorito.setFavorite(lLinhas.get(posicao).ehFavorito(), true);
            botaoFavorito.setPosicao(posicao);
            botaoFavorito.setOnFavoriteChangeListener(new BotaoFavorito.OnFavoriteChangeListener() {
                @Override
                public void onFavoriteChanged(BotaoFavorito buttonView, boolean favorite) {
                     if(favorite) {
-                            
-                        QueryBuilder.insereFavorito();
+                        QueryBuilder.insereFavorito(lLinhas.get(buttonView.getPosicao()));
+                    } else {
+                        QueryBuilder.deletaFavorito(lLinhas.get(buttonView.getPosicao()));
                     }
                }
            });

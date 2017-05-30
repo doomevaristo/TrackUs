@@ -17,6 +17,7 @@ public class Linha implements Serializable {
     private String titulo;
     private String subtitulo;
     private List<Carro> carros;
+    private boolean ehFavorito = false;
 
     private static final long serialVersionUID = 1L;
 
@@ -138,5 +139,13 @@ public class Linha implements Serializable {
 
     public void setCidade(Cidade cidade) {
         this.cidade = cidade;
+    }
+
+    public boolean ehFavorito() {
+        return ehFavorito;
+    }
+
+    public void setEhFavorito(boolean ehFavorito) {
+        this.ehFavorito = ehFavorito;
     }
 }

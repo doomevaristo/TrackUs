@@ -59,6 +59,10 @@ public class BotaoFavorito extends ImageView {
         BotaoFavorito.posicao = posicao;
     }
 
+    public int getPosicao() {
+        return posicao;
+    }
+
     public BotaoFavorito(Context context) {
         super(context);
         init(context, null);

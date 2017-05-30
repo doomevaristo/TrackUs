@@ -2,9 +2,8 @@ package com.marcosevaristo.tcc001;
 
 import android.app.Application;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
-import com.marcosevaristo.tcc001.utils.SQLiteHelper;
+import com.marcosevaristo.tcc001.database.SQLiteHelper;
 
 public class App extends Application {
     private static Context context;

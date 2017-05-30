@@ -22,8 +22,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
+import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
+import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class AbaBuscar extends Fragment {
     ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     List<ValueEventListener> lEventos = new ArrayList<>();
     ProgressBar progressBar;
+    String ultimaBusca;
 
     public AbaBuscar() {
     }
@@ -60,6 +63,7 @@ public class AbaBuscar extends Fragment {
     private void setupListLinhas(String argBusca) {
         progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
+        ultimaBusca = argBusca;
         lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
         lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -81,6 +85,10 @@ public class AbaBuscar extends Fragment {
                 if (mapValues != null) {
                     lLinhas = new ListaLinhasDTO();
                     lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
+                    List<Linha> lLinhasFavoritas = QueryBuilder.getFavoritos(ultimaBusca);
+                    if(CollectionUtils.isNotEmpty(lLinhasFavoritas)) {
+                        setupLinhasFavoritas(lLinhas.getlLinhas(), lLinhasFavoritas);
+                    }
                     adapter = new LinhasAdapter(getActivity(), R.layout.item_da_busca, lLinhas.getlLinhas());
                     adapter.notifyDataSetChanged();
                     lView.setAdapter(adapter);
@@ -99,6 +107,17 @@ public class AbaBuscar extends Fragment {
         lEventos.add(evento);
         queryRefNum.addListenerForSingleValueEvent(evento);
         //queryRefTitulo.addListenerForSingleValueEvent(evento);
+    }
+
+    private void setupLinhasFavoritas(List<Linha> linhasFirebase, List<Linha> linhasFavoritas) {
+        for(Linha umaLinhaFb : linhasFirebase) {
+            for(Linha umaLinhaFav : linhasFavoritas) {
+                if(umaLinhaFb.getNumero().equals(umaLinhaFav.getNumero())) {
+                    umaLinhaFb.setEhFavorito(true);
+                    break;
+                }
+            }
+        }
     }
 
     private void setupFloatingActionButton(View view) {

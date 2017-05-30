@@ -8,7 +8,6 @@ import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.model.Cidade;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
-import com.marcosevaristo.tcc001.utils.SQLiteHelper;
 import com.marcosevaristo.tcc001.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -16,22 +15,14 @@ import java.util.List;
 
 public class QueryBuilder {
 
-    private QueryBuilder instance = null;
     private static SQLiteHelper sqLiteHelper = App.getSqLiteHelper();
-
-    public QueryBuilder getInstance() {
-        if(instance == null) {
-            instance = new QueryBuilder();
-        }
-        return instance;
-    }
 
     private QueryBuilder() {}
 
-    public static List<Linha> getFavoritos() {
+    public static List<Linha> getFavoritos(String nroLinha) {
         List<Linha> lLinhas = new ArrayList<>();
         Linha linhaAux;
-        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(getSelectAllFavoritos(), null);
+        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(getSelectAllFavoritos(nroLinha), null);
         if(cursor != null) {
             cursor.moveToFirst();
         }
@@ -44,14 +35,18 @@ public class QueryBuilder {
             lLinhas.add(linhaAux);
         }
 
+        cursor.close();
         return lLinhas;
     }
 
-    private static String getSelectAllFavoritos() {
+    private static String getSelectAllFavoritos(String nroLinha) {
         StringBuilder sb = new StringBuilder("SELECT ").append(DatabaseObjectsHelper.TLinhas.getColunasParaSelect()).append(" FROM ");
         sb.append(DatabaseObjectsHelper.TFavoritos.TABLE_NAME);
         sb.append(" INNER JOIN ").append(DatabaseObjectsHelper.TLinhas.TABLE_NAME).append(" ON ");
         sb.append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ").append(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA);
+        if(StringUtils.isNotBlank(nroLinha)) {
+            sb.append(" WHERE ").append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" LIKE '%").append(nroLinha).append("%' ");
+        }
         sb.append(" ORDER BY ").append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" DESC");
         return sb.toString();
     }
@@ -64,15 +59,19 @@ public class QueryBuilder {
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_TITULO, linha.getTitulo());
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_SUBTITULO, linha.getSubtitulo());
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_CIDADE, linha.getCidade().getId());
-        db.insert(DatabaseObjectsHelper.TLinhas.TABLE_NAME, null, values);
+        Long linhaId = db.insert(DatabaseObjectsHelper.TLinhas.TABLE_NAME, null, values);
 
         values = new ContentValues();
-        values.put(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA, linha.getNumero());
+        values.put(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA, linhaId);
         return db.insert(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, null, values);
     }
 
-    public void deletaFavorito() {
+    public static void deletaFavorito(Linha linha) {
+        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
+        StringBuilder sbWhere = new StringBuilder();
+        sbWhere.append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ?");
 
+        db.delete(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
     }
 
     public Linha getFavorito(String linhaId) {
