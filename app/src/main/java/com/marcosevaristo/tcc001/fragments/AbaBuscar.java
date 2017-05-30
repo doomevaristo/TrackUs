@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,13 +21,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
-import com.marcosevaristo.tcc001.adapters.MyArrayAdapter;
+import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
 import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
-import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +36,7 @@ public class AbaBuscar extends Fragment {
     ListView lView;
     Query queryRefNum;
     Query queryRefTitulo;
-    MyArrayAdapter adapter;
+    LinhasAdapter adapter;
     ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     List<ValueEventListener> lEventos = new ArrayList<>();
     ProgressBar progressBar;
@@ -51,8 +48,6 @@ public class AbaBuscar extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,7 +81,7 @@ public class AbaBuscar extends Fragment {
                 if (mapValues != null) {
                     lLinhas = new ListaLinhasDTO();
                     lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
-                    adapter = new MyArrayAdapter(lLinhas.getArrayListLinhas(), getActivity());
+                    adapter = new LinhasAdapter(getActivity(), R.layout.item_da_busca, lLinhas.getlLinhas());
                     adapter.notifyDataSetChanged();
                     lView.setAdapter(adapter);
                 } else {

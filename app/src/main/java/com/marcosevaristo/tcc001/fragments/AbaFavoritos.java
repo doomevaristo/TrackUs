@@ -5,11 +5,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
+import com.marcosevaristo.tcc001.database.QueryBuilder;
+import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 
 
 public class AbaFavoritos extends Fragment{
+    ListView lView;
+    LinhasAdapter adapter;
+    ListaLinhasDTO lLinhas = new ListaLinhasDTO();
 
     public AbaFavoritos() {}
 
@@ -24,4 +32,12 @@ public class AbaFavoritos extends Fragment{
         return inflater.inflate(R.layout.aba_favoritos, container, false);
     }
 
+    private void setupListLinhas() {
+        lView = (ListView) getActivity().findViewById(R.id.listaLinhasFavoritas);
+        lLinhas = new ListaLinhasDTO();
+        lLinhas.addLinhas(QueryBuilder.getFavoritos());
+        adapter = new LinhasAdapter(App.getAppContext(), R.layout.item_dos_favoritos, lLinhas.getlLinhas());
+        adapter.notifyDataSetChanged();
+        lView.setAdapter(adapter);
+    }
 }

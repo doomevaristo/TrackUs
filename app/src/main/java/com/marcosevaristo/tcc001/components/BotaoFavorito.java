@@ -21,20 +21,21 @@ public class BotaoFavorito extends ImageView {
     public static final int STYLE_STAR = 0;
     public static final int STYLE_HEART = 1;
 
-    private static final int DEFAULT_BUTTON_SIZE = 48;
-    private static final int DEFAULT_PADDING = 12;
+    public static int posicao;
+
+    private static final int DEFAULT_BUTTON_SIZE = 40;
+    private static final int DEFAULT_PADDING = 5;
     private static final boolean DEFAULT_FAVORITE = false;
     private static final boolean DEFAULT_ANIMATE_FAVORITE = true;
     private static final boolean DEFAULT_ANIMATE_UNFAVORITE = false;
     private static final int DEFAULT_ROTATION_DURATION = 400;
     private static final int DEFAULT_ROTATION_ANGLE = 360;
     private static final int DEFAULT_BOUNCE_DURATION = 300;
-    private static final int FAVORITE_STAR_BLACK = R.mipmap.ic_favorite_black;
-    private static final int FAVORITE_STAR_BORDER_BLACK = R.mipmap.ic_favorite_black_border;
-    private static final int FAVORITE_HEART_BLACK = R.mipmap.ic_star_black;
-    private static final int FAVORITE_HEART_BORDER_BLACK = R.mipmap.ic_star_black_border;
-    private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR =
-            new AccelerateInterpolator();
+    private static final int FAVORITE_STAR_BLACK = R.mipmap.ic_star_black;
+    private static final int FAVORITE_STAR_BORDER_BLACK = R.mipmap.ic_star_black_border;
+    private static final int FAVORITE_HEART_BLACK = R.mipmap.ic_favorite_black;
+    private static final int FAVORITE_HEART_BORDER_BLACK = R.mipmap.ic_favorite_black_border;
+    private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
     private int mButtonSize;
@@ -53,6 +54,10 @@ public class BotaoFavorito extends ImageView {
     private OnFavoriteChangeListener mOnFavoriteChangeListener;
     private OnFavoriteAnimationEndListener mOnFavoriteAnimationEndListener;
     private boolean mBroadcasting;
+
+    public void setPosicao(int posicao) {
+        BotaoFavorito.posicao = posicao;
+    }
 
     public BotaoFavorito(Context context) {
         super(context);
@@ -118,35 +123,22 @@ public class BotaoFavorito extends ImageView {
         TypedArray attr = getTypedArray(context, attributeSet, R.styleable.BotaoFavorito);
         if (attr != null) {
             try {
-                mButtonSize = ImageUtils.dpToPx(
-                        attr.getInt(R.styleable.BotaoFavorito_fav_size, DEFAULT_BUTTON_SIZE), getResources());
-                mAnimateFavorite = attr.getBoolean(R.styleable.BotaoFavorito_fav_animate_favorite,
-                        mAnimateFavorite);
-                mAnimateUnfavorite =
-                        attr.getBoolean(R.styleable.BotaoFavorito_fav_animate_unfavorite,
-                                mAnimateUnfavorite);
-                mPadding = ImageUtils.dpToPx(
-                        attr.getInt(R.styleable.BotaoFavorito_fav_padding, DEFAULT_PADDING),
-                        getResources());
+                mButtonSize = ImageUtils.dpToPx(attr.getInt(R.styleable.BotaoFavorito_fav_size, DEFAULT_BUTTON_SIZE), getResources());
+                mAnimateFavorite = attr.getBoolean(R.styleable.BotaoFavorito_fav_animate_favorite, mAnimateFavorite);
+                mAnimateUnfavorite = attr.getBoolean(R.styleable.BotaoFavorito_fav_animate_unfavorite, mAnimateUnfavorite);
+                mPadding = ImageUtils.dpToPx(attr.getInt(R.styleable.BotaoFavorito_fav_padding, DEFAULT_PADDING), getResources());
+
                 if (attr.getResourceId(R.styleable.BotaoFavorito_fav_favorite_image, 0) != 0
-                        && attr.getResourceId(R.styleable.BotaoFavorito_fav_not_favorite_image, 0)
-                        != 0) {
-                    mFavoriteResource =
-                            attr.getResourceId(R.styleable.BotaoFavorito_fav_favorite_image,
-                                    FAVORITE_STAR_BLACK);
-                    mNotFavoriteResource =
-                            attr.getResourceId(R.styleable.BotaoFavorito_fav_not_favorite_image,
-                                    FAVORITE_STAR_BORDER_BLACK);
+                        && attr.getResourceId(R.styleable.BotaoFavorito_fav_not_favorite_image, 0) != 0) {
+                    mFavoriteResource = attr.getResourceId(R.styleable.BotaoFavorito_fav_favorite_image, FAVORITE_STAR_BLACK);
+                    mNotFavoriteResource = attr.getResourceId(R.styleable.BotaoFavorito_fav_not_favorite_image, FAVORITE_STAR_BORDER_BLACK);
                 } else {
                     setTheme(attr.getInt(R.styleable.BotaoFavorito_fav_type, STYLE_STAR));
                 }
 
-                mRotationDuration = attr.getInt(R.styleable.BotaoFavorito_fav_rotation_duration,
-                        mRotationDuration);
-                mRotationAngle =
-                        attr.getInt(R.styleable.BotaoFavorito_fav_rotation_angle, mRotationAngle);
-                mBounceDuration =
-                        attr.getInt(R.styleable.BotaoFavorito_fav_bounce_duration, mBounceDuration);
+                mRotationDuration = attr.getInt(R.styleable.BotaoFavorito_fav_rotation_duration, mRotationDuration);
+                mRotationAngle = attr.getInt(R.styleable.BotaoFavorito_fav_rotation_angle, mRotationAngle);
+                mBounceDuration = attr.getInt(R.styleable.BotaoFavorito_fav_bounce_duration, mBounceDuration);
             } finally {
                 attr.recycle();
             }
@@ -187,7 +179,6 @@ public class BotaoFavorito extends ImageView {
     public void setFavorite(boolean favorite) {
         if (mFavorite != favorite) {
             mFavorite = favorite;
-            // Avoid infinite recursions if setChecked() is called from a listener
             if (mBroadcasting) {
                 return;
             }
@@ -306,9 +297,6 @@ public class BotaoFavorito extends ImageView {
         animatorSet.start();
     }
 
-    /**
-     * Builder.
-     */
     public static final class Builder {
         private final Context context;
 

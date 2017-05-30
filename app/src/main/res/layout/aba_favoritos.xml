@@ -4,12 +4,10 @@
     android:layout_height="match_parent"
     tools:context="com.marcosevaristo.tcc001.fragments.AbaBuscar">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/abaFavoritos"
-        android:textSize="40dp"
-        android:textStyle="bold"
-        android:layout_centerInParent="true"/>
+    <ListView
+        android:id="@+id/listaLinhasFavoritas"
+        android:layout_marginTop="@dimen/marginTopListLinhas"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/listLinhasHeight" />
 
 </RelativeLayout>

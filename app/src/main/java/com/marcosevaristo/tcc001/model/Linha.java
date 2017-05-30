@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Linha implements Serializable {
+    private Cidade cidade;
     private String numero;
     private String titulo;
     private String subtitulo;
@@ -129,5 +130,13 @@ public class Linha implements Serializable {
             sb.append(this.subtitulo);
         }
         return sb.toString();
+    }
+
+    public Cidade getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
     }
 }
