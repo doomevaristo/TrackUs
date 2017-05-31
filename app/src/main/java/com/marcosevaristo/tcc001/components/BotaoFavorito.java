@@ -24,7 +24,6 @@ public class BotaoFavorito extends ImageView {
     public static int posicao;
 
     private static final int DEFAULT_BUTTON_SIZE = 40;
-    private static final int DEFAULT_PADDING = 5;
     private static final boolean DEFAULT_FAVORITE = false;
     private static final boolean DEFAULT_ANIMATE_FAVORITE = true;
     private static final boolean DEFAULT_ANIMATE_UNFAVORITE = false;
@@ -96,7 +95,6 @@ public class BotaoFavorito extends ImageView {
 
     private void init(Context context, AttributeSet attrs) {
         mButtonSize = ImageUtils.dpToPx(DEFAULT_BUTTON_SIZE, getResources());
-        mPadding = ImageUtils.dpToPx(DEFAULT_PADDING, getResources());
         mFavorite = DEFAULT_FAVORITE;
         mAnimateFavorite = DEFAULT_ANIMATE_FAVORITE;
         mAnimateUnfavorite = DEFAULT_ANIMATE_UNFAVORITE;
@@ -130,7 +128,6 @@ public class BotaoFavorito extends ImageView {
                 mButtonSize = ImageUtils.dpToPx(attr.getInt(R.styleable.BotaoFavorito_fav_size, DEFAULT_BUTTON_SIZE), getResources());
                 mAnimateFavorite = attr.getBoolean(R.styleable.BotaoFavorito_fav_animate_favorite, mAnimateFavorite);
                 mAnimateUnfavorite = attr.getBoolean(R.styleable.BotaoFavorito_fav_animate_unfavorite, mAnimateUnfavorite);
-                mPadding = ImageUtils.dpToPx(attr.getInt(R.styleable.BotaoFavorito_fav_padding, DEFAULT_PADDING), getResources());
 
                 if (attr.getResourceId(R.styleable.BotaoFavorito_fav_favorite_image, 0) != 0
                         && attr.getResourceId(R.styleable.BotaoFavorito_fav_not_favorite_image, 0) != 0) {
@@ -305,7 +302,6 @@ public class BotaoFavorito extends ImageView {
         private final Context context;
 
         private int mButtonSize = DEFAULT_BUTTON_SIZE;
-        private int mPadding = DEFAULT_PADDING;
         private boolean mFavorite = DEFAULT_FAVORITE;
         private boolean mAnimateFavorite = DEFAULT_ANIMATE_FAVORITE;
         private boolean mAnimateUnfavorite = DEFAULT_ANIMATE_UNFAVORITE;
@@ -324,11 +320,6 @@ public class BotaoFavorito extends ImageView {
 
         public Builder size(int size) {
             this.mButtonSize = size;
-            return this;
-        }
-
-        public Builder padding(int padding) {
-            this.mPadding = padding;
             return this;
         }
 
@@ -389,7 +380,6 @@ public class BotaoFavorito extends ImageView {
         public BotaoFavorito create() {
             BotaoFavorito BotaoFavorito = new BotaoFavorito(context);
             BotaoFavorito.setSize(mButtonSize);
-            BotaoFavorito.setPadding(mPadding);
             BotaoFavorito.setFavorite(mFavorite, false);
             BotaoFavorito.setAnimateFavorite(mAnimateFavorite);
             BotaoFavorito.setAnimateUnfavorite(mAnimateUnfavorite);

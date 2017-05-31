@@ -66,12 +66,12 @@ public class QueryBuilder {
         return db.insert(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, null, values);
     }
 
-    public static void deletaFavorito(Linha linha) {
+    public static int deletaFavorito(Linha linha) {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
         StringBuilder sbWhere = new StringBuilder();
         sbWhere.append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ?");
 
-        db.delete(DatabaseObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
+        return db.delete(DatabaseObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
     }
 
     public Linha getFavorito(String linhaId) {

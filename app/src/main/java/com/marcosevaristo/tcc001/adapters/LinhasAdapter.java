@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.marcosevaristo.tcc001.R;
@@ -46,12 +47,20 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         LinhaHolder linhaHolder = null;
+        boolean ehBusca = false;
+        boolean ehFavoritos = false;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(layoutResId, parent, false);
-
+            view = inflater.inflate(layoutResId, parent, false);;
             linhaHolder = new LinhaHolder();
-            linhaHolder.texto = (TextView)view.findViewById(R.id.linhaBuscadaText);
+            TextView textView = (TextView)view.findViewById(R.id.linhaBuscadaText);
+            if(textView == null) {
+                textView = (TextView)view.findViewById(R.id.linhaFavoritaText);
+                ehFavoritos = textView != null;
+            } else {
+                ehBusca = true;
+            }
+            linhaHolder.texto = textView;
 
             view.setTag(linhaHolder);
         } else {
@@ -61,7 +70,7 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
         Linha linha = lLinhas.get(position);
         if(linha != null) {
             linhaHolder.texto.setText(linha.toString());
-            linhaHolder.botaoFavorito = setupBotaoFavorito(view, position);
+            if(ehBusca) linhaHolder.botaoFavorito = setupBotaoFavorito(view, position);
         }
 
         return view;
@@ -76,10 +85,11 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
            botaoFavorito.setOnFavoriteChangeListener(new BotaoFavorito.OnFavoriteChangeListener() {
                @Override
                public void onFavoriteChanged(BotaoFavorito buttonView, boolean favorite) {
+                   Linha linha = lLinhas.get(buttonView.getPosicao());
                     if(favorite) {
-                        QueryBuilder.insereFavorito(lLinhas.get(buttonView.getPosicao()));
+                        linha.setEhFavorito(Long.valueOf(QueryBuilder.insereFavorito(linha)) != null);
                     } else {
-                        QueryBuilder.deletaFavorito(lLinhas.get(buttonView.getPosicao()));
+                        linha.setEhFavorito(QueryBuilder.deletaFavorito(linha) > 0);
                     }
                }
            });
@@ -89,6 +99,7 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
 
     private static class LinhaHolder {
         TextView texto;
+        TextView subTexto;
         BotaoFavorito botaoFavorito;
     }
 }
