@@ -2,9 +2,11 @@ package com.marcosevaristo.tcc001.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
+import com.marcosevaristo.tcc001.adapters.NumericKeyBoardTransformationMethod;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
@@ -126,10 +129,13 @@ public class AbaBuscar extends Fragment {
             @Override
             public void onClick(View view) {
                 TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(busca.getVisibility() == View.GONE) {
                     busca.setVisibility(View.VISIBLE);
                     busca.requestFocus();
+                    busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                    busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+                    busca.setTypeface(Typeface.SANS_SERIF);
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
                 } else {
                     String arg = busca.getText().toString();

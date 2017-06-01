@@ -42,4 +42,8 @@ public class AbaFavoritos extends Fragment{
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
     }
+
+    public void atualizaFavoritos(View view) {
+        setupListLinhas(view);
+    }
 }
