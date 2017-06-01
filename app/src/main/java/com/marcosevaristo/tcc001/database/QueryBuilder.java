@@ -59,11 +59,15 @@ public class QueryBuilder {
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_TITULO, linha.getTitulo());
         values.put(DatabaseObjectsHelper.TLinhas.COLUMN_SUBTITULO, linha.getSubtitulo());
         //values.put(DatabaseObjectsHelper.TLinhas.COLUMN_CIDADE, linha.getCidade().getId());
+        db.beginTransaction();
         Long linhaId = db.insert(DatabaseObjectsHelper.TLinhas.TABLE_NAME, null, values);
 
         values = new ContentValues();
         values.put(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA, linhaId);
-        return db.insert(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, null, values);
+        Long favoritoId = db.insert(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, null, values);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        return favoritoId;
     }
 
     public static int deletaFavorito(Linha linha) {

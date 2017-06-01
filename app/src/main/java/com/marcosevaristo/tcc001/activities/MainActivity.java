@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.EditText;
 
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.fragments.AbaBuscar;
@@ -71,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 if(position == 0) {
                     AbaBuscar abaBuscar = (AbaBuscar) adapter.getItem(position);
+                    EditText editText = (EditText) abaBuscar.getView().findViewById(R.id.etBusca);
+                    editText.setVisibility(View.GONE);
+                    editText.setText("");
                 } else if(position == 1) {
                     AbaFavoritos abaFavoritos = (AbaFavoritos) adapter.getItem(position);
                     abaFavoritos.atualizaFavoritos(abaFavoritos.getView());
