@@ -129,21 +129,31 @@ public class AbaBuscar extends Fragment {
             @Override
             public void onClick(View view) {
                 TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(busca.getVisibility() == View.GONE) {
-                    busca.setVisibility(View.VISIBLE);
-                    busca.requestFocus();
-                    busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-                    busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-                    busca.setTypeface(Typeface.SANS_SERIF);
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
+                    exibeComponenteDeBusca(busca, imm);
                 } else {
                     String arg = busca.getText().toString();
                     if(!arg.equals("")) {
                         setupListLinhas(busca.getText().toString());
-                        busca.setText("");
+                        escondeComponenteDeBusca(busca, imm);
                     }
                 }
+            }
+
+            private void exibeComponenteDeBusca(TextView busca, InputMethodManager imm) {
+                busca.setVisibility(View.VISIBLE);
+                busca.requestFocus();
+                busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+                busca.setTypeface(Typeface.SANS_SERIF);
+                imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
+            }
+
+            private void escondeComponenteDeBusca(TextView busca, InputMethodManager imm) {
+                busca.setText("");
+                busca.setVisibility(View.GONE);
+                imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
             }
         });
     }
