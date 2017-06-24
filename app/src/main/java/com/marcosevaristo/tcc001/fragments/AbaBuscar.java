@@ -30,6 +30,7 @@ import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
+import com.marcosevaristo.tcc001.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +39,14 @@ import java.util.Map;
 
 public class AbaBuscar extends Fragment {
 
-    ListView lView;
-    Query queryRefNum;
-    Query queryRefTitulo;
-    LinhasAdapter adapter;
-    ListaLinhasDTO lLinhas = new ListaLinhasDTO();
-    List<ValueEventListener> lEventos = new ArrayList<>();
-    ProgressBar progressBar;
-    String ultimaBusca;
+    private ListView lView;
+    private Query queryRefNum;
+    private Query queryRefTitulo;
+    private LinhasAdapter adapter;
+    private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
+    private List<ValueEventListener> lEventos = new ArrayList<>();
+    private ProgressBar progressBar;
+    private String ultimaBusca;
 
     public AbaBuscar() {
     }
@@ -134,7 +135,7 @@ public class AbaBuscar extends Fragment {
                     exibeComponenteDeBusca(busca, imm);
                 } else {
                     String arg = busca.getText().toString();
-                    if(!arg.equals("")) {
+                    if(StringUtils.isNotBlank(arg)) {
                         setupListLinhas(busca.getText().toString());
                         escondeComponenteDeBusca(busca, imm);
                     }

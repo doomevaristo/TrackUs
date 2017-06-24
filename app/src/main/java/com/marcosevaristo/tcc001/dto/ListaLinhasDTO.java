@@ -15,7 +15,7 @@ public class ListaLinhasDTO {
             lLinhas = new ArrayList<>();
         }
         for(Linha umaLinha : lista) {
-            if(this.findLinhaByNumeroOuTitulo(umaLinha.getNumero().toString()) == null
+            if(findLinhaByNumeroOuTitulo(umaLinha.getNumero().toString()) == null
                     && this.findLinhaByNumeroOuTitulo(umaLinha.getTitulo()) == null) {
                 lLinhas.add(umaLinha);
             }
@@ -39,7 +39,7 @@ public class ListaLinhasDTO {
      * @param arg
      * @return
      */
-    public Linha findLinhaByNumeroOuTitulo(String arg) {
+    private Linha findLinhaByNumeroOuTitulo(String arg) {
         if(CollectionUtils.isNotEmpty(this.lLinhas)) {
             for(Linha umaLinha : this.lLinhas) {
                 if(umaLinha.getNumero().toString().equals(arg) || umaLinha.getTitulo().equals(arg)) {

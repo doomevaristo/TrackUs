@@ -3,7 +3,7 @@ package com.marcosevaristo.tcc001.utils;
 public class StringUtils {
 
     public static boolean isBlank(String texto) {
-        return texto == null || texto.trim() == "";
+        return texto == null || "".equals(texto.trim());
     }
 
     public static boolean isNotBlank(String texto) {
