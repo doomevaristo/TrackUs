@@ -26,13 +26,14 @@ public class QueryBuilder {
         if(cursor != null) {
             cursor.moveToFirst();
         }
-        while(cursor.moveToNext()) {
+        for (int i = 0; i < cursor.getCount(); i++) {
             linhaAux = new Linha();
             linhaAux.setNumero(cursor.getString(0));
             linhaAux.setTitulo(cursor.getString(1));
             linhaAux.setSubtitulo(cursor.getString(2));
             linhaAux.setCidade(new Cidade(cursor.getString(3)));
             lLinhas.add(linhaAux);
+            cursor.moveToNext();
         }
 
         cursor.close();
@@ -77,9 +78,4 @@ public class QueryBuilder {
 
         return db.delete(SQLiteObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
     }
-
-    private static boolean colunasInformadasClausulasNaoInformadas(String[] columns, List<Cidade> lCidades) {
-        return CollectionUtils.isEmpty(lCidades) && columns != null && columns.length > 0;
-    }
-
 }

@@ -55,7 +55,7 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
             TextView textView = (TextView)view.findViewById(R.id.linhaBuscadaText);
             if(textView == null) {
                 textView = (TextView)view.findViewById(R.id.linhaFavoritaText);
-                ehFavoritos = textView != null;
+                ehBusca = textView == null;
             } else {
                 ehBusca = true;
             }
