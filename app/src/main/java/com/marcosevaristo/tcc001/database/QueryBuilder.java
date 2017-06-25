@@ -40,14 +40,14 @@ public class QueryBuilder {
     }
 
     private static String getSelectAllFavoritos(String nroLinha) {
-        StringBuilder sb = new StringBuilder("SELECT ").append(DatabaseObjectsHelper.TLinhas.getColunasParaSelect()).append(" FROM ");
-        sb.append(DatabaseObjectsHelper.TFavoritos.TABLE_NAME).append(" FAV ");
-        sb.append(" INNER JOIN ").append(DatabaseObjectsHelper.TLinhas.TABLE_NAME).append(" LINHA ON LINHA.");
-        sb.append(DatabaseObjectsHelper.TLinhas._ID).append(" = FAV.").append(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA);
+        StringBuilder sb = new StringBuilder("SELECT ").append(SQLiteObjectsHelper.TLinhas.getColunasParaSelect()).append(" FROM ");
+        sb.append(SQLiteObjectsHelper.TFavoritos.TABLE_NAME).append(" FAV ");
+        sb.append(" INNER JOIN ").append(SQLiteObjectsHelper.TLinhas.TABLE_NAME).append(" LINHA ON LINHA.");
+        sb.append(SQLiteObjectsHelper.TLinhas._ID).append(" = FAV.").append(SQLiteObjectsHelper.TFavoritos.COLUMN_LINHA);
         if(StringUtils.isNotBlank(nroLinha)) {
-            sb.append(" WHERE ").append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" LIKE '%").append(nroLinha).append("%' ");
+            sb.append(" WHERE ").append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" LIKE '%").append(nroLinha).append("%' ");
         }
-        sb.append(" ORDER BY ").append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" DESC");
+        sb.append(" ORDER BY ").append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" DESC");
         return sb.toString();
     }
 
@@ -55,16 +55,16 @@ public class QueryBuilder {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO, linha.getNumero());
-        values.put(DatabaseObjectsHelper.TLinhas.COLUMN_TITULO, linha.getTitulo());
-        values.put(DatabaseObjectsHelper.TLinhas.COLUMN_SUBTITULO, linha.getSubtitulo());
-        //values.put(DatabaseObjectsHelper.TLinhas.COLUMN_CIDADE, linha.getCidade().getId());
+        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO, linha.getNumero());
+        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_TITULO, linha.getTitulo());
+        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_SUBTITULO, linha.getSubtitulo());
+        //values.put(SQLiteObjectsHelper.TLinhas.COLUMN_CIDADE, linha.getCidade().getId());
         db.beginTransaction();
-        Long linhaId = db.insert(DatabaseObjectsHelper.TLinhas.TABLE_NAME, null, values);
+        Long linhaId = db.insert(SQLiteObjectsHelper.TLinhas.TABLE_NAME, null, values);
 
         values = new ContentValues();
-        values.put(DatabaseObjectsHelper.TFavoritos.COLUMN_LINHA, linhaId);
-        Long favoritoId = db.insert(DatabaseObjectsHelper.TFavoritos.TABLE_NAME, null, values);
+        values.put(SQLiteObjectsHelper.TFavoritos.COLUMN_LINHA, linhaId);
+        Long favoritoId = db.insert(SQLiteObjectsHelper.TFavoritos.TABLE_NAME, null, values);
         db.setTransactionSuccessful();
         db.endTransaction();
         return favoritoId;
@@ -73,9 +73,9 @@ public class QueryBuilder {
     public static int deletaFavorito(Linha linha) {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
         StringBuilder sbWhere = new StringBuilder();
-        sbWhere.append(DatabaseObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ?");
+        sbWhere.append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ?");
 
-        return db.delete(DatabaseObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
+        return db.delete(SQLiteObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
     }
 
     private static boolean colunasInformadasClausulasNaoInformadas(String[] columns, List<Cidade> lCidades) {
