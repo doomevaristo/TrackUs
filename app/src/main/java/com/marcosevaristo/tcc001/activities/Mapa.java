@@ -9,6 +9,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,12 +20,14 @@ import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Mapa extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private List<Marker> lMarker;
     private Linha linha;
     Query queryRef;
 
@@ -34,7 +37,6 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_mapa);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
         mapFragment.getMapAsync(this);
     }
 
@@ -53,16 +55,17 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Map mapCarros = (Map) dataSnapshot.getValue();
                     if(mapCarros != null) {
+                        removeMarkers();
                         List<Carro> lCarros = Carro.converteMapParaListCarros(mapCarros);
+                        lMarker = new ArrayList<>();
                         for(Carro umCarro : lCarros) {
                             Double latitude = Double.parseDouble(umCarro.getLatitude());
                             Double longitude = Double.parseDouble(umCarro.getLongitude());
                             Double latitudeBlumenau = -26.9053897;
                             Double longitudeBlumenau = -49.0935486;
                             LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                            MarkerOptions marker = new MarkerOptions().position(posicaoUmCarro).title(linha.toString());
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
-                            mMap.addMarker(marker);
+                            lMarker.add(mMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString())
+                                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker))));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeBlumenau, longitudeBlumenau), 14.0f));
                         }
                     }
@@ -75,6 +78,12 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
             };
 
             queryRef.addValueEventListener(evento);
+        }
+    }
+
+    private void removeMarkers() {
+        for(Marker umMarker : lMarker) {
+            umMarker.remove();
         }
     }
 }
