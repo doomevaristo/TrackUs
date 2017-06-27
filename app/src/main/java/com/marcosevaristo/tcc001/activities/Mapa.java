@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
+import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
 import java.util.ArrayList;
@@ -55,7 +56,9 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Map mapCarros = (Map) dataSnapshot.getValue();
                     if(mapCarros != null) {
-                        removeMarkers();
+                        if(CollectionUtils.isNotEmpty(lMarker)) {
+                            removeMarkers();
+                        }
                         List<Carro> lCarros = Carro.converteMapParaListCarros(mapCarros);
                         lMarker = new ArrayList<>();
                         for(Carro umCarro : lCarros) {
