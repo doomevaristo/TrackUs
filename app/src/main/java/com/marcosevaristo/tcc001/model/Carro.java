@@ -64,25 +64,27 @@ public class Carro implements Serializable{
         if(mapCarros != null && mapCarros.size() > 0) {
             lCarros = new ArrayList<>();
             for(Object umCarroId : mapCarros.keySet()) {
-                Map attrs = (Map) mapCarros.get(umCarroId);
-                for(Object umAttr : attrs.keySet()) {
-                    String umAttrStr = umAttr.toString();
-                    switch (umAttrStr) {
-                        case "location":
-                            location = attrs.get(umAttr).toString();
-                            break;
-                        case "latitude":
-                            latitude = attrs.get(umAttr).toString();
-                            break;
-                        case "longitude":
-                            longitude = attrs.get(umAttr).toString();
-                            break;
-                        case "id":
-                            id = attrs.get(umAttr).toString();
-                            break;
+                if(mapCarros.get(umCarroId) != null) {
+                    Map attrs = (Map) mapCarros.get(umCarroId);
+                    for(Object umAttr : attrs.keySet()) {
+                        String umAttrStr = umAttr.toString();
+                        switch (umAttrStr) {
+                            case "location":
+                                location = attrs.get(umAttr).toString();
+                                break;
+                            case "latitude":
+                                latitude = attrs.get(umAttr).toString();
+                                break;
+                            case "longitude":
+                                longitude = attrs.get(umAttr).toString();
+                                break;
+                            case "id":
+                                id = attrs.get(umAttr).toString();
+                                break;
+                        }
                     }
+                    lCarros.add(new Carro(id, longitude, latitude, location));
                 }
-                lCarros.add(new Carro(id, longitude, latitude, location));
             }
         }
 
