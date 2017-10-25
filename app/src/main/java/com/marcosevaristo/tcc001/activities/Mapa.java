@@ -1,13 +1,12 @@
 package com.marcosevaristo.tcc001.activities;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -30,7 +29,6 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
 
     Double latitudeBlumenau = -26.9053897;
     Double longitudeBlumenau = -49.0935486;
-    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker);
     float zoom = 14.0f;
     private GoogleMap mMap;
     private List<Marker> lMarker;
@@ -71,7 +69,7 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                             Double latitude = Double.parseDouble(umCarro.getLatitude());
                             Double longitude = Double.parseDouble(umCarro.getLongitude());
                             LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                            lMarker.add(mMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(icon)));
+                            lMarker.add(mMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker))));
                         }
                     }
                 }
