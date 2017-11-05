@@ -41,15 +41,13 @@ public class AbaBuscar extends Fragment {
 
     private ListView lView;
     private Query queryRefNum;
-    private Query queryRefTitulo;
     private LinhasAdapter adapter;
     private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     private List<ValueEventListener> lEventos = new ArrayList<>();
     private ProgressBar progressBar;
     private String ultimaBusca;
 
-    public AbaBuscar() {
-    }
+    public AbaBuscar() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,19 +68,13 @@ public class AbaBuscar extends Fragment {
         ultimaBusca = argBusca;
         lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
-        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), Mapa.class);
-                Bundle bundleAux = new Bundle();
-                bundleAux.putSerializable("linha", (Linha)parent.getItemAtPosition(position));
-                intent.putExtras(bundleAux);
-                startActivity(intent);
-            }
-        });
-        queryRefNum = FirebaseUtils.getLinhasReference().child(argBusca).getRef();
-        //queryRefTitulo = FirebaseUtils.getLinhasReference();
-        ValueEventListener evento = new ValueEventListener() {
+        lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
+
+        FirebaseUtils.getLinhasReference().child(argBusca).getRef().addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
+    }
+
+    private ValueEventListener getEventoBuscaLinhasFirebase() {
+        return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map mapValues = (Map) dataSnapshot.getValue();
@@ -107,10 +99,19 @@ public class AbaBuscar extends Fragment {
                 progressBar.setVisibility(View.GONE);
             }
         };
+    }
 
-        lEventos.add(evento);
-        queryRefNum.addListenerForSingleValueEvent(evento);
-        //queryRefTitulo.addListenerForSingleValueEvent(evento);
+    private AdapterView.OnItemClickListener getOnItemClickListenerOpenMap() {
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), Mapa.class);
+                Bundle bundleAux = new Bundle();
+                bundleAux.putSerializable("linha", (Linha)parent.getItemAtPosition(position));
+                intent.putExtras(bundleAux);
+                startActivity(intent);
+            }
+        };
     }
 
     private void setupLinhasFavoritas(List<Linha> linhasFirebase, List<Linha> linhasFavoritas) {

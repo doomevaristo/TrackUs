@@ -1,18 +1,14 @@
 package com.marcosevaristo.tcc001.model;
 
-import android.view.View;
-
-import com.marcosevaristo.tcc001.utils.CollectionUtils;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Linha implements Serializable {
-    private Cidade cidade;
+    private Long idSql;
+    private Municipio municipio;
     private String numero;
     private String titulo;
     private String subtitulo;
@@ -29,6 +25,14 @@ public class Linha implements Serializable {
         this.numero = numero;
         this.titulo = titulo;
         this.subtitulo = subtitulo;
+    }
+
+    public Long getIdSql() {
+        return idSql;
+    }
+
+    public void setIdSql(Long idSql) {
+        this.idSql = idSql;
     }
 
     public String getNumero() {
@@ -133,12 +137,12 @@ public class Linha implements Serializable {
         return sb.toString();
     }
 
-    public Cidade getCidade() {
-        return cidade;
+    public Municipio getMunicipio() {
+        return municipio;
     }
 
-    public void setCidade(Cidade cidade) {
-        this.cidade = cidade;
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
     }
 
     public boolean ehFavorito() {

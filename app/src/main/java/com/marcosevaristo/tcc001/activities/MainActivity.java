@@ -1,41 +1,37 @@
 package com.marcosevaristo.tcc001.activities;
 
-import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.adapters.ViewPagerAdapter;
+import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.fragments.AbaBuscar;
 import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
-
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private ViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseUtils.startReferenceLinhas();
-        setContentView(R.layout.activity_main);
-        setupToolbar();
-        setupTabLayout();
+        App.setMunicipio(QueryBuilder.getMunicipioAtual());
+        if(App.getMunicipio() == null) {
+            startActivity(new Intent(App.getAppContext(), SelecionaMunicipio.class));
+        } else {
+            FirebaseUtils.startReferenceLinhas();
+            setContentView(R.layout.activity_main);
+            setupToolbar();
+            setupTabLayout();
+        }
     }
 
     @Override
@@ -49,23 +45,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
     }
 
     private void setupTabLayout() {
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.abaBuscar));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.abaFavoritos));
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new AbaBuscar(), getString(R.string.abaBuscar));
         adapter.addFragment(new AbaFavoritos(), getString(R.string.abaFavoritos));
         viewPager.setAdapter(adapter);
+
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.addOnPageChangeListener(getOnPageChangeListener(adapter));
+    }
+
+    private ViewPager.OnPageChangeListener getOnPageChangeListener(final ViewPagerAdapter adapter) {
+        return new ViewPager.OnPageChangeListener(){
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -88,41 +88,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
-    }
-
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return super.getItemPosition(object);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
+        };
     }
 }
