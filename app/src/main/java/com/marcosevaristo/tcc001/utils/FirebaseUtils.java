@@ -1,16 +1,8 @@
 package com.marcosevaristo.tcc001.utils;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.App;
-import com.marcosevaristo.tcc001.model.Linha;
-
-import java.util.List;
 
 public class FirebaseUtils {
 
@@ -26,7 +18,7 @@ public class FirebaseUtils {
                 .child(App.getMunicipio().getId().toString()).child(NODE_LINHAS);
     }
 
-    public static void startReferenceMunicipios() {
+    private static void startReferenceMunicipios() {
         databaseReferenceMunicipios = getDatabase().getReference().child(NODE_MUNICIPIOS);
     }
 

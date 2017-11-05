@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
@@ -33,7 +31,6 @@ import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 import com.marcosevaristo.tcc001.utils.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,10 +38,8 @@ import java.util.Map;
 public class AbaBuscar extends Fragment {
 
     private ListView lView;
-    private Query queryRefNum;
     private LinhasAdapter adapter;
     private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
-    private List<ValueEventListener> lEventos = new ArrayList<>();
     private ProgressBar progressBar;
 
     public AbaBuscar() {}

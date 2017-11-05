@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.marcosevaristo.tcc001.App;
-import com.marcosevaristo.tcc001.model.Cidade;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
@@ -100,33 +99,6 @@ public class QueryBuilder {
         whereClause.append(SQLiteObjectsHelper.TLinhas._ID).append(" = ?");
         db.beginTransaction();
         db.update(SQLiteObjectsHelper.TLinhas.TABLE_NAME, values, whereClause.toString(), new String[]{linha.getIdSql().toString()});
-    }
-
-    public static long insereFavorito(Linha linha) {
-        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO, linha.getNumero());
-        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_TITULO, linha.getTitulo());
-        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_SUBTITULO, linha.getSubtitulo());
-        //values.put(SQLiteObjectsHelper.TLinhas.COLUMN_MUNICIPIO, linha.getCidade().getId());
-        db.beginTransaction();
-        Long linhaId = db.insert(SQLiteObjectsHelper.TLinhas.TABLE_NAME, null, values);
-
-        values = new ContentValues();
-        values.put(SQLiteObjectsHelper.TFavoritos.COLUMN_LINHA, linhaId);
-        Long favoritoId = db.insert(SQLiteObjectsHelper.TFavoritos.TABLE_NAME, null, values);
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        return favoritoId;
-    }
-
-    public static int deletaFavorito(Linha linha) {
-        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
-        StringBuilder sbWhere = new StringBuilder();
-        sbWhere.append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = ?");
-
-        return db.delete(SQLiteObjectsHelper.TLinhas.TABLE_NAME, sbWhere.toString(), new String[]{linha.getNumero()});
     }
 
     public static Municipio getMunicipioAtual() {
