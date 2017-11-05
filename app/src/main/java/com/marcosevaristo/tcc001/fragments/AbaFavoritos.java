@@ -15,9 +15,10 @@ import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 
 
 public class AbaFavoritos extends Fragment{
-    ListView lView;
-    LinhasAdapter adapter;
-    ListaLinhasDTO lLinhas = new ListaLinhasDTO();
+    private View view;
+    private ListView lView;
+    private LinhasAdapter adapter;
+    private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
 
     public AbaFavoritos() {}
 
@@ -29,21 +30,21 @@ public class AbaFavoritos extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.aba_favoritos, container, false);
-        setupListLinhas(view);
+        view = inflater.inflate(R.layout.aba_favoritos, container, false);
+        setupListLinhas();
         return view;
     }
 
-    private void setupListLinhas(View view) {
+    private void setupListLinhas() {
         lView = (ListView) view.findViewById(R.id.listaLinhasFavoritas);
         lLinhas = new ListaLinhasDTO();
         lLinhas.addLinhas(QueryBuilder.getFavoritos(null));
-        adapter = new LinhasAdapter(App.getAppContext(), R.layout.item_dos_favoritos, lLinhas.getlLinhas());
+        adapter = new LinhasAdapter(R.layout.item_dos_favoritos, lLinhas.getlLinhas());
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
     }
 
-    public void atualizaFavoritos(View view) {
-        setupListLinhas(view);
+    public void atualizaFavoritos() {
+        setupListLinhas();
     }
 }

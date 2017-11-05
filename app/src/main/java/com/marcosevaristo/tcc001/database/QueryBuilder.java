@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.firebase.database.DatabaseReference;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.Municipio;
@@ -65,10 +66,11 @@ public class QueryBuilder {
         }
         for (int i = 0; i < cursor.getCount(); i++) {
             linhaAux = new Linha();
-            linhaAux.setNumero(cursor.getString(0));
-            linhaAux.setTitulo(cursor.getString(1));
-            linhaAux.setSubtitulo(cursor.getString(2));
-            linhaAux.setMunicipio(new Municipio(cursor.getLong(3)));
+            linhaAux.setIdSql(cursor.getLong(0));
+            linhaAux.setNumero(cursor.getString(1));
+            linhaAux.setTitulo(cursor.getString(2));
+            linhaAux.setSubtitulo(cursor.getString(3));
+            linhaAux.setMunicipio(new Municipio(cursor.getLong(4)));
             linhaAux.setEhFavorito(true);
             lLinhas.add(linhaAux);
             cursor.moveToNext();
@@ -99,6 +101,9 @@ public class QueryBuilder {
         whereClause.append(SQLiteObjectsHelper.TLinhas._ID).append(" = ?");
         db.beginTransaction();
         db.update(SQLiteObjectsHelper.TLinhas.TABLE_NAME, values, whereClause.toString(), new String[]{linha.getIdSql().toString()});
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     public static Municipio getMunicipioAtual() {
@@ -156,10 +161,22 @@ public class QueryBuilder {
 
     public static void insereMunicipios(List<Municipio> lMunicipiosAux) {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
-
         ContentValues values = new ContentValues();
+
+        List<Municipio> municipiosGravados = getMunicipios(null);
+        Map<String, Municipio> mMunicipiosAux = null;
+        if(CollectionUtils.isNotEmpty(municipiosGravados)) {
+            mMunicipiosAux = new HashMap<>();
+            for(Municipio umMunicipioGravado : municipiosGravados) {
+                mMunicipiosAux.put(umMunicipioGravado.getId()+"|"+umMunicipioGravado.getNome(), umMunicipioGravado);
+            }
+        }
+
         db.beginTransaction();
         for (Municipio umMunicipio : lMunicipiosAux) {
+            if(mMunicipiosAux != null && mMunicipiosAux.get(umMunicipio.getId()+"|"+umMunicipio.getNome()) != null) {
+                continue;
+            }
             values.put(SQLiteObjectsHelper.TMunicipios._ID, umMunicipio.getId());
             values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_MUNNOME, umMunicipio.getNome());
             umMunicipio.setId(db.insert(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, null, values));

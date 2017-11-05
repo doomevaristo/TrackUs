@@ -16,14 +16,21 @@ import com.marcosevaristo.tcc001.adapters.ViewPagerAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.fragments.AbaBuscar;
 import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
+import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.setMunicipio(QueryBuilder.getMunicipioAtual());
+        App.setMunicipio(new Municipio(1L, "Blumenau")/*QueryBuilder.getMunicipioAtual()*/);
+        List<Municipio> lMunicipio = new ArrayList<>();
+        lMunicipio.add(App.getMunicipio());
+        QueryBuilder.insereMunicipios(lMunicipio);
         if(App.getMunicipio() == null) {
             startActivity(new Intent(App.getAppContext(), SelecionaMunicipio.class));
         } else {
@@ -79,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     editText.setVisibility(View.GONE);
                     editText.setText("");
                 } else if(position == 1) {
-                    AbaFavoritos abaFavoritos = (AbaFavoritos) adapter.getItem(position);
-                    abaFavoritos.atualizaFavoritos(abaFavoritos.getView());
+                    ((AbaFavoritos) adapter.getItem(position)).atualizaFavoritos();
                 }
             }
 

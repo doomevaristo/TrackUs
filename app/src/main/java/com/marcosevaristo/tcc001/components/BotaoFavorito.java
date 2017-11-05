@@ -54,14 +54,6 @@ public class BotaoFavorito extends ImageView {
     private OnFavoriteAnimationEndListener mOnFavoriteAnimationEndListener;
     private boolean mBroadcasting;
 
-    public void setPosicao(int posicao) {
-        BotaoFavorito.posicao = posicao;
-    }
-
-    public int getPosicao() {
-        return posicao;
-    }
-
     public BotaoFavorito(Context context) {
         super(context);
         init(context, null);

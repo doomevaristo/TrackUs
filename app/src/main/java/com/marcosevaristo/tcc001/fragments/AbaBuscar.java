@@ -37,6 +37,7 @@ import java.util.Map;
 
 public class AbaBuscar extends Fragment {
 
+    private View view;
     private ListView lView;
     private LinhasAdapter adapter;
     private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
@@ -52,16 +53,16 @@ public class AbaBuscar extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.aba_buscar, container, false);
-        setupListLinhas(null);
+        view = inflater.inflate(R.layout.aba_buscar, container, false);
+        setupListLinhas("");
         setupFloatingActionButton(view);
         return view;
     }
 
     private void setupListLinhas(String argBusca) {
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
+        lView = (ListView) view.findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
         lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
 
@@ -69,9 +70,7 @@ public class AbaBuscar extends Fragment {
         if(CollectionUtils.isNotEmpty(lLinhasSalvas)) {
             lLinhas = new ListaLinhasDTO();
             lLinhas.addLinhas(lLinhasSalvas);
-            adapter = new LinhasAdapter(getActivity(), R.layout.item_da_busca, lLinhas.getlLinhas());
-            adapter.notifyDataSetChanged();
-            lView.setAdapter(adapter);
+            setupListAdapter();
         } else {
             FirebaseUtils.getLinhasReference().child(argBusca).getRef().addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         }
@@ -82,7 +81,7 @@ public class AbaBuscar extends Fragment {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map mapValues = (Map) dataSnapshot.getValue();
+                Map<String, Object> mapValues = (Map<String, Object>) dataSnapshot.getValue();
                 if (mapValues != null) {
                     lLinhas = new ListaLinhasDTO();
                     lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
@@ -92,11 +91,9 @@ public class AbaBuscar extends Fragment {
                         }
                         QueryBuilder.insereLinhas(lLinhas.getlLinhas());
                     }
-                    adapter = new LinhasAdapter(getActivity(), R.layout.item_da_busca, lLinhas.getlLinhas());
-                    adapter.notifyDataSetChanged();
-                    lView.setAdapter(adapter);
+                    setupListAdapter();
                 } else {
-                    Toast.makeText(getActivity(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
+                    Toast.makeText(App.getAppContext(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
                 progressBar.setVisibility(View.GONE);
             }
@@ -108,11 +105,17 @@ public class AbaBuscar extends Fragment {
         };
     }
 
+    private void setupListAdapter() {
+        adapter = new LinhasAdapter(R.layout.item_da_busca, lLinhas.getlLinhas());
+        adapter.notifyDataSetChanged();
+        lView.setAdapter(adapter);
+    }
+
     private AdapterView.OnItemClickListener getOnItemClickListenerOpenMap() {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), Mapa.class);
+                Intent intent = new Intent(App.getAppContext(), Mapa.class);
                 Bundle bundleAux = new Bundle();
                 bundleAux.putSerializable("linha", (Linha)parent.getItemAtPosition(position));
                 intent.putExtras(bundleAux);
@@ -129,8 +132,8 @@ public class AbaBuscar extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                TextView busca = (TextView) view.findViewById(R.id.etBusca);
+                InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(busca.getVisibility() == View.GONE) {
                     exibeComponenteDeBusca(busca, imm);
                 } else {

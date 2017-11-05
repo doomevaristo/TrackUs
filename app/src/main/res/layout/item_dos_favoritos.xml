@@ -8,13 +8,22 @@
         android:id="@+id/linhaFavoritaText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:paddingLeft="8dp"
-        android:textSize="14sp" />
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/linhaFavoritaSubText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="8dp"
+        android:textSize="14sp"/>
 
     <Button
-        android:id="@+id/delete_btn"
+        android:id="@+id/btExcluir"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
