@@ -27,6 +27,7 @@ public class SQLiteObjectsHelper {
         public static String COLUMN_TITULO = "LIN_TITULO";
         public static String COLUMN_SUBTITULO = "LIN_SUBTITULO";
         public static String COLUMN_MUNICIPIO = "LIN_MUNID";
+        public static String COLUMN_EHFAVORITA = "LIN_EHFAVORITA";
 
         private static TLinhas instance;
 
@@ -46,6 +47,7 @@ public class SQLiteObjectsHelper {
             sb.append(",").append(COLUMN_TITULO).append(" VARCHAR(255) NOT NULL ");
             sb.append(",").append(COLUMN_SUBTITULO).append(" VARCHAR(600) NULL ");
             sb.append(",").append(COLUMN_MUNICIPIO).append(" INTEGER NULL ");
+            sb.append(",").append(COLUMN_EHFAVORITA).append(" INTEGER NOT NULL DEFAULT 0 ");
             sb.append(", FOREIGN KEY (").append(COLUMN_MUNICIPIO).append(") REFERENCES ").append(TMunicipios.TABLE_NAME).append("(")
                     .append(TMunicipios._ID).append(") ON DELETE CASCADE");
             sb.append(");");
@@ -55,7 +57,8 @@ public class SQLiteObjectsHelper {
         @Override
         public  String getColunasParaSelect() {
             StringBuilder sb = new StringBuilder();
-            sb.append(COLUMN_NUMERO).append(", ").append(COLUMN_TITULO).append(", ").append(COLUMN_SUBTITULO).append(", ").append(COLUMN_MUNICIPIO);
+            sb.append(COLUMN_NUMERO).append(", ").append(COLUMN_TITULO).append(", ").append(COLUMN_SUBTITULO).append(", ").append(COLUMN_MUNICIPIO)
+                    .append(", ").append(COLUMN_EHFAVORITA);
             return sb.toString();
         }
     }

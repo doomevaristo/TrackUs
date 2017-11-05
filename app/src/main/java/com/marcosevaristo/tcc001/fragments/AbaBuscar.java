@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
@@ -45,7 +46,6 @@ public class AbaBuscar extends Fragment {
     private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     private List<ValueEventListener> lEventos = new ArrayList<>();
     private ProgressBar progressBar;
-    private String ultimaBusca;
 
     public AbaBuscar() {}
 
@@ -58,6 +58,7 @@ public class AbaBuscar extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aba_buscar, container, false);
+        setupListLinhas(null);
         setupFloatingActionButton(view);
         return view;
     }
@@ -65,12 +66,21 @@ public class AbaBuscar extends Fragment {
     private void setupListLinhas(String argBusca) {
         progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        ultimaBusca = argBusca;
         lView = (ListView) getActivity().findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
         lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
 
-        FirebaseUtils.getLinhasReference().child(argBusca).getRef().addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
+        List<Linha> lLinhasSalvas = QueryBuilder.getLinhas(argBusca);
+        if(CollectionUtils.isNotEmpty(lLinhasSalvas)) {
+            lLinhas = new ListaLinhasDTO();
+            lLinhas.addLinhas(lLinhasSalvas);
+            adapter = new LinhasAdapter(getActivity(), R.layout.item_da_busca, lLinhas.getlLinhas());
+            adapter.notifyDataSetChanged();
+            lView.setAdapter(adapter);
+        } else {
+            FirebaseUtils.getLinhasReference().child(argBusca).getRef().addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
+        }
+        progressBar.setVisibility(View.GONE);
     }
 
     private ValueEventListener getEventoBuscaLinhasFirebase() {
@@ -81,9 +91,11 @@ public class AbaBuscar extends Fragment {
                 if (mapValues != null) {
                     lLinhas = new ListaLinhasDTO();
                     lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
-                    List<Linha> lLinhasFavoritas = QueryBuilder.getFavoritos(ultimaBusca);
-                    if(CollectionUtils.isNotEmpty(lLinhasFavoritas)) {
-                        setupLinhasFavoritas(lLinhas.getlLinhas(), lLinhasFavoritas);
+                    if(CollectionUtils.isNotEmpty(lLinhas.getlLinhas())) {
+                        for(Linha umaLinha : lLinhas.getlLinhas()) {
+                            umaLinha.setMunicipio(App.getMunicipio());
+                        }
+                        QueryBuilder.insereLinhas(lLinhas.getlLinhas());
                     }
                     adapter = new LinhasAdapter(getActivity(), R.layout.item_da_busca, lLinhas.getlLinhas());
                     adapter.notifyDataSetChanged();
@@ -114,20 +126,12 @@ public class AbaBuscar extends Fragment {
         };
     }
 
-    private void setupLinhasFavoritas(List<Linha> linhasFirebase, List<Linha> linhasFavoritas) {
-        for(Linha umaLinhaFb : linhasFirebase) {
-            for(Linha umaLinhaFav : linhasFavoritas) {
-                if(umaLinhaFb.getNumero().equals(umaLinhaFav.getNumero())) {
-                    umaLinhaFb.setEhFavorito(true);
-                    break;
-                }
-            }
-        }
+    private void setupFloatingActionButton(View view) {
+         view.findViewById(R.id.fab_search).setOnClickListener(getOnClickListenerFAB());
     }
 
-    private void setupFloatingActionButton(View view) {
-        final FloatingActionButton fabSearch = (FloatingActionButton) view.findViewById(R.id.fab_search);
-        fabSearch.setOnClickListener(new View.OnClickListener() {
+    private View.OnClickListener getOnClickListenerFAB() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
@@ -157,6 +161,6 @@ public class AbaBuscar extends Fragment {
                 busca.setVisibility(View.GONE);
                 imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
             }
-        });
+        };
     }
 }

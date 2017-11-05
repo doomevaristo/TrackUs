@@ -85,11 +85,8 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
                @Override
                public void onFavoriteChanged(BotaoFavorito buttonView, boolean favorite) {
                    Linha linha = lLinhas.get(buttonView.getPosicao());
-                    if(favorite) {
-                        linha.setEhFavorito(Long.valueOf(QueryBuilder.insereFavorito(linha)) != null);
-                    } else {
-                        linha.setEhFavorito(QueryBuilder.deletaFavorito(linha) > 0);
-                    }
+                   linha.setEhFavorito(favorite);
+                   QueryBuilder.updateFavorito(linha);
                }
            });
        }
