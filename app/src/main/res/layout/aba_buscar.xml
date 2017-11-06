@@ -16,9 +16,9 @@
 
     <ListView
         android:id="@+id/listaLinhas"
-        android:layout_marginTop="@dimen/marginTopListLinhas"
+        android:layout_marginTop="@dimen/marginTopListItens"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/listLinhasHeight" />
+        android:layout_height="@dimen/listItensHeight" />
 
     <EditText
         android:id="@+id/etBusca"

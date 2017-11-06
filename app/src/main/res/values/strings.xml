@@ -16,6 +16,7 @@
     <!-- ALERTS -->
     <string name="nenhum_resultado">Não foram encontrados resultados na busca</string>
     <string name="favorito_excluido">A linha %1$s foi excluída dos favoritos.</string>
+    <string name="municipio_selecionado_sucesso">O município %1$s foi selecionado com sucesso.</string>
 
     <string name="title_activity_mapa">Mapa</string>
 </resources>

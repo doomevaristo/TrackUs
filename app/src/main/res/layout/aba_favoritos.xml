@@ -6,8 +6,8 @@
 
     <ListView
         android:id="@+id/listaLinhasFavoritas"
-        android:layout_marginTop="@dimen/marginTopListLinhas"
+        android:layout_marginTop="@dimen/marginTopListItens"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/listLinhasHeight" />
+        android:layout_height="@dimen/listItensHeight" />
 
 </RelativeLayout>

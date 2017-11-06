@@ -15,7 +15,7 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="etBuscaWidth">270dp</dimen>
     <dimen name="etBuscaHeight">50dp</dimen>
-    <dimen name="listLinhasHeight">480dp</dimen>
-    <dimen name="marginTopListLinhas">110dp</dimen>
+    <dimen name="listItensHeight">480dp</dimen>
+    <dimen name="marginTopListItens">110dp</dimen>
     <dimen name="linhasHeight">60dp</dimen>
 </resources>
