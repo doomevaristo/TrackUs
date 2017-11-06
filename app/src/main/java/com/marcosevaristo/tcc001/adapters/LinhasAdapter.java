@@ -79,7 +79,6 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
                 linhaHolder.botaoExcluir = setupBotaoExcluir(view, position);
             }
         }
-
         return view;
     }
 
@@ -107,9 +106,12 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
                 Linha linha = lLinhas.get(posicao);
                 linha.setEhFavorito(false);
                 QueryBuilder.updateFavorito(linha);
-                Toast.makeText(App.getAppContext(), App.getAppContext().getString(R.string.favorito_excluido, linha.getNumero()), Toast.LENGTH_LONG);
+                lLinhas.remove(linha);
+                Toast.makeText(App.getAppContext(), App.getAppContext().getString(R.string.favorito_excluido, linha.getNumero()), Toast.LENGTH_SHORT).show();
+                notifyDataSetChanged();
             }
         });
+
         return botaoExcluir;
     }
 

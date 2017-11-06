@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="50dp">
 
     <TextView
         android:id="@+id/linhaFavoritaText"
@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:paddingLeft="8dp"
-        android:textSize="18sp"/>
+        android:textSize="22sp"/>
 
     <TextView
         android:id="@+id/linhaFavoritaSubText"
@@ -20,7 +20,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:paddingLeft="8dp"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
     <Button
         android:id="@+id/btExcluir"

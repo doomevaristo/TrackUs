@@ -10,4 +10,7 @@ public class StringUtils {
         return !isBlank(texto);
     }
 
+    public static String emptyString() {
+        return "";
+    }
 }

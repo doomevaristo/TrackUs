@@ -1,10 +1,13 @@
 package com.marcosevaristo.tcc001.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Municipio {
+public class Municipio implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String nome;
     private List<Linha> lLinhas;

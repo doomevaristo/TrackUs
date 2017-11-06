@@ -69,64 +69,67 @@ public class Linha implements Serializable {
 
     public static List<Linha> converteMapParaListaLinhas(Map<String, Object> lMapLinhas) {
         List<Linha> lLinhas = new ArrayList<>();
-        String numeroAux = null;
-        String tituloAux = null;
-        String subTituloAux = null;
-        String location = null;
-        String latitude = null;
-        String longitude = null;
-        String id = null;
-        List<Carro> lCarrosAux = new ArrayList<>();
+        Linha linhaAux = new Linha();
+        boolean resultadoUnico = false;
         for(String umaKeyAux : lMapLinhas.keySet()) {
-            Map<String, Object> umaLinha = (Map<String, Object>) lMapLinhas.get(umaKeyAux);
-            if(umaLinha != null) {
+            if(lMapLinhas.get(umaKeyAux) instanceof Map) {
+                Map<String, Object> umaLinha = (Map<String, Object>) lMapLinhas.get(umaKeyAux);
+                linhaAux = new Linha();
                 for(String umAttr : umaLinha.keySet()) {
-                    switch(umAttr) {
-                        case "numero":
-                            numeroAux = umaLinha.get(umAttr).toString();
-                            break;
-                        case "titulo":
-                            tituloAux = umaLinha.get(umAttr).toString();
-                            break;
-                        case "subtitulo":
-                            subTituloAux = umaLinha.get(umAttr).toString();
-                            break;
-                        case "carros":
-                            Collection<Map> mapCarros = ((Map) umaLinha.get(umAttr)).values();
-                            for(Map umCarroMap : mapCarros) {
-                                for(Object umKey : umCarroMap.keySet()) {
-                                    String umKeyStr = umKey.toString();
-                                    switch (umKeyStr) {
-                                        case "location":
-                                            location = umCarroMap.get(umKey).toString();
-                                            break;
-                                        case "latitude":
-                                            latitude = umCarroMap.get(umKey).toString();
-                                            break;
-                                        case "longitude":
-                                            longitude = umCarroMap.get(umKey).toString();
-                                            break;
-                                        case "id":
-                                            id = umCarroMap.get(umKey).toString();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                lCarrosAux.add(new Carro(id, longitude, latitude, location));
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                    montaUmAtributoDaLinha(linhaAux, umAttr, umaLinha.get(umAttr));
                 }
+                lLinhas.add(linhaAux);
+            } else {
+                resultadoUnico = true;
+                montaUmAtributoDaLinha(linhaAux, umaKeyAux, lMapLinhas.get(umaKeyAux));
             }
-            Linha linhaAux = new Linha(lCarrosAux, numeroAux, tituloAux, subTituloAux);
-            linhaAux.setCarros(lCarrosAux);
-            lLinhas.add(linhaAux);
         }
-
+        if(resultadoUnico) lLinhas.add(linhaAux);
         return lLinhas;
+    }
+
+    private static void montaUmAtributoDaLinha(Linha linhaAux, String atributo, Object valor) {
+        switch(atributo) {
+            case "numero":
+                linhaAux.setNumero(valor.toString());
+                break;
+            case "titulo":
+                linhaAux.setTitulo(valor.toString());
+                break;
+            case "subtitulo":
+                linhaAux.setSubtitulo(valor.toString());
+                break;
+            case "carros":
+                Collection<Map> mapCarros = ((Map) valor).values();
+                List<Carro> lCarrosAux = new ArrayList<>();
+                for(Map umCarroMap : mapCarros) {
+                    Carro carroAux = new Carro();
+                    for(Object umKey : umCarroMap.keySet()) {
+                        String umKeyStr = umKey.toString();
+                        switch (umKeyStr) {
+                            case "location":
+                                carroAux.setLocation(umCarroMap.get(umKey).toString());
+                                break;
+                            case "latitude":
+                                carroAux.setLatitude(umCarroMap.get(umKey).toString());
+                                break;
+                            case "longitude":
+                                carroAux.setLongitude(umCarroMap.get(umKey).toString());
+                                break;
+                            case "id":
+                                carroAux.setId(umCarroMap.get(umKey).toString());
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    lCarrosAux.add(carroAux);
+                }
+                linhaAux.setCarros(lCarrosAux);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

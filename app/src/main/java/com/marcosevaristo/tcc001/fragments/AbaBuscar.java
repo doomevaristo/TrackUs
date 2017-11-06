@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class AbaBuscar extends Fragment {
     private LinhasAdapter adapter;
     private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
     private ProgressBar progressBar;
+    private String ultimaBusca;
 
     public AbaBuscar() {}
 
@@ -54,7 +56,8 @@ public class AbaBuscar extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.aba_buscar, container, false);
-        setupListLinhas("");
+        ultimaBusca = StringUtils.emptyString();
+        setupListLinhas(ultimaBusca);
         setupFloatingActionButton(view);
         return view;
     }
@@ -74,6 +77,7 @@ public class AbaBuscar extends Fragment {
         } else {
             FirebaseUtils.getLinhasReference().child(argBusca).getRef().addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         }
+        ultimaBusca = argBusca;
         progressBar.setVisibility(View.GONE);
     }
 
@@ -132,16 +136,14 @@ public class AbaBuscar extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView busca = (TextView) view.findViewById(R.id.etBusca);
+                TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
                 InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(busca.getVisibility() == View.GONE) {
                     exibeComponenteDeBusca(busca, imm);
                 } else {
                     String arg = busca.getText().toString();
-                    if(StringUtils.isNotBlank(arg)) {
-                        setupListLinhas(busca.getText().toString());
-                        escondeComponenteDeBusca(busca, imm);
-                    }
+                    setupListLinhas(arg);
+                    escondeComponenteDeBusca(busca, imm);
                 }
             }
 
@@ -160,5 +162,12 @@ public class AbaBuscar extends Fragment {
                 imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
             }
         };
+    }
+
+    public void atualizaBusca() {
+        EditText editText = (EditText) view.findViewById(R.id.etBusca);
+        editText.setVisibility(View.GONE);
+        editText.setText(StringUtils.emptyString());
+        setupListLinhas(ultimaBusca);
     }
 }

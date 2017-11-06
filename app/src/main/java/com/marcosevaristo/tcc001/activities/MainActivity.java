@@ -81,10 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 if(position == 0) {
-                    AbaBuscar abaBuscar = (AbaBuscar) adapter.getItem(position);
-                    EditText editText = (EditText) abaBuscar.getView().findViewById(R.id.etBusca);
-                    editText.setVisibility(View.GONE);
-                    editText.setText("");
+                    ((AbaBuscar) adapter.getItem(position)).atualizaBusca();
                 } else if(position == 1) {
                     ((AbaFavoritos) adapter.getItem(position)).atualizaFavoritos();
                 }
