@@ -1,8 +1,9 @@
 package com.marcosevaristo.tcc001.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,11 +15,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
-import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
+import com.marcosevaristo.tcc001.adapters.MunicipiosAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.dto.ListaMunicipiosDTO;
-import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
@@ -37,8 +36,12 @@ public class SelecionaMunicipio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seleciona_municipio);
+        setupToolbar();
         setupListMunicipios();
+    }
 
+    private void setupToolbar() {
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
     }
 
     private void setupListMunicipios() {
@@ -88,13 +91,18 @@ public class SelecionaMunicipio extends AppCompatActivity {
         adapter = new MunicipiosAdapter(R.layout.municipio_item, lMunicipios.getlMunicipios());
         adapter.notifyDataSetChanged();
         lMunicipiosView.setAdapter(adapter);
+        progressBar.setVisibility(View.GONE);
     }
 
     private AdapterView.OnItemClickListener getOnItemClickListenerSelecionaMunicipio() {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(App.getAppContext(), App.getAppContext().getString(R.string.municipio_selecionado_sucesso, lMunicipios.getlMunicipios().get(position).getNome()), Toast.LENGTH_LONG).show();
+                Municipio municipioSelecionado = lMunicipios.getlMunicipios().get(position);
+                QueryBuilder.updateMunicipioAtual(municipioSelecionado);
+                App.setMunicipio(municipioSelecionado);
+
+                Toast.makeText(App.getAppContext(), App.getAppContext().getString(R.string.municipio_selecionado_sucesso, municipioSelecionado.getNome()), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(App.getAppContext(), MainActivity.class));
             }
         };

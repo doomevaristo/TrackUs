@@ -19,4 +19,11 @@
     <string name="municipio_selecionado_sucesso">O município %1$s foi selecionado com sucesso.</string>
 
     <string name="title_activity_mapa">Mapa</string>
+    <string name="municipioAtualDet">(atual)</string>
+    <string name="title_activity_drawer">DrawerActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="opcoes_group_menu">Opções</string>
+    <string name="alterar_municipio_menu">Alterar município</string>
 </resources>

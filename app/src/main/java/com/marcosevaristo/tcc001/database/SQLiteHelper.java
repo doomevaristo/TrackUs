@@ -25,7 +25,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQLiteObjectsHelper.TLinhas.getInstance().getCreateEntry());
         db.execSQL(SQLiteObjectsHelper.TMunicipios.getInstance().getCreateEntry());
-        db.execSQL(SQLiteObjectsHelper.TMunicipioAtual.getInstance().getCreateEntry());
     }
 
     @Override
@@ -37,7 +36,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
         if (!db.isReadOnly()) {
-            db.execSQL("PRAGMA foreign_keys=ON;");
+            db.execSQL("PRAGMA foreign_keys=1;");
         }
     }
 }

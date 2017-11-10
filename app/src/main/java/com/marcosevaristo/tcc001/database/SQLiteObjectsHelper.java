@@ -66,6 +66,7 @@ public class SQLiteObjectsHelper {
     public static class TMunicipios implements BaseColumns, OperacoesComColunas {
         public static final String TABLE_NAME = "TB_MUNICIPIOS";
         public static final String COLUMN_MUNNOME = "MUN_MUNNOME";
+        public static final String COLUMN_EHMUNICIPIOATUAL = "MUN_EHMUNATUAL";
 
         private static TMunicipios instance;
 
@@ -79,7 +80,7 @@ public class SQLiteObjectsHelper {
         @Override
         public String getColunasParaSelect() {
             StringBuilder sb = new StringBuilder();
-            sb.append("MUN.").append(_ID).append(", ").append(COLUMN_MUNNOME);
+            sb.append("MUN.").append(_ID).append(", ").append(COLUMN_MUNNOME).append(", ").append(COLUMN_EHMUNICIPIOATUAL);
             return sb.toString();
         }
 
@@ -89,40 +90,7 @@ public class SQLiteObjectsHelper {
             sb.append("CREATE TABLE ").append(TABLE_NAME);
             sb.append(" (").append(_ID).append(" INTEGER NOT NULL PRIMARY KEY ");
             sb.append(", ").append(COLUMN_MUNNOME).append(" VARCHAR(255) NOT NULL ");
-            sb.append(");");
-            return sb.toString();
-        }
-    }
-
-    public static class TMunicipioAtual implements BaseColumns, OperacoesComColunas {
-
-        public static final String TABLE_NAME = "TB_MUNICIPIO_ATUAL";
-        public static final String COLUMN_MUNICIPIOID = "MUA_MUNID";
-
-        private static TMunicipioAtual instance;
-
-        public static TMunicipioAtual getInstance() {
-            if(instance == null) {
-                instance = new TMunicipioAtual();
-            }
-            return instance;
-        }
-
-        @Override
-        public String getColunasParaSelect() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("MUN.").append(_ID).append(", ").append(", ").append(COLUMN_MUNICIPIOID);
-            return sb.toString();
-        }
-
-        @Override
-        public String getCreateEntry() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("CREATE TABLE ").append(TABLE_NAME);
-            sb.append(" (").append(_ID).append(" INTEGER NOT NULL PRIMARY KEY ");
-            sb.append(", ").append(COLUMN_MUNICIPIOID).append(" INTEGER NOT NULL ");
-            sb.append(", FOREIGN KEY (").append(COLUMN_MUNICIPIOID).append(") REFERENCES ").append(TMunicipios.TABLE_NAME).append("(")
-                    .append(TMunicipios._ID).append(") ON DELETE CASCADE");
+            sb.append(", ").append(COLUMN_EHMUNICIPIOATUAL).append(" INTEGER NOT NULL DEFAULT 0 ");
             sb.append(");");
             return sb.toString();
         }

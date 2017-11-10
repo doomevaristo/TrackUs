@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme">
+        android:theme="@style/MyAppStyle">
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation"
@@ -46,7 +46,7 @@
         <activity
             android:name=".activities.Mapa"
             android:label="@string/title_activity_mapa" />
-        <activity android:name=".activities.SelecionaMunicipio"></activity>
+        <activity android:name=".activities.SelecionaMunicipio" />
     </application>
 
 </manifest>

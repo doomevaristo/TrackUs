@@ -106,6 +106,30 @@ public class QueryBuilder {
         db.endTransaction();
     }
 
+    public static void updateMunicipioAtual(Municipio novoMunicipioAtual) {
+        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        StringBuilder whereClause = new StringBuilder();
+        Municipio municipioAtualOld = getMunicipioAtual();
+
+
+        values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL, NumberUtils.INTEGER_ONE);
+        whereClause.append(SQLiteObjectsHelper.TMunicipios._ID).append(" = ?");
+
+        db.beginTransaction();
+        db.update(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, values, whereClause.toString(), new String[]{novoMunicipioAtual.getId().toString()});
+
+        if(municipioAtualOld != null) {
+            values = new ContentValues();
+            values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL, NumberUtils.INTEGER_ZERO);
+
+            db.update(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, values, whereClause.toString(), new String[]{municipioAtualOld.getId().toString()});
+        }
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
     public static Municipio getMunicipioAtual() {
         Municipio municipioAux = null;
         Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(getSelectAllMunicipioAtual(), null);
@@ -116,6 +140,7 @@ public class QueryBuilder {
                 municipioAux = new Municipio();
                 municipioAux.setId(cursor.getLong(0));
                 municipioAux.setNome(cursor.getString(1));
+                municipioAux.setEhMunicipioAtual(NumberUtils.INTEGER_ONE.equals(cursor.getInt(2)));
             }
 
             cursor.close();
@@ -125,9 +150,8 @@ public class QueryBuilder {
 
     private static String getSelectAllMunicipioAtual() {
         StringBuilder sb = new StringBuilder("SELECT ").append(SQLiteObjectsHelper.TMunicipios.getInstance().getColunasParaSelect()).append(" FROM ");
-        sb.append(SQLiteObjectsHelper.TMunicipioAtual.TABLE_NAME).append(" MUA ");
-        sb.append(" INNER JOIN ").append(SQLiteObjectsHelper.TMunicipios.TABLE_NAME).append(" MUN ON MUN.");
-        sb.append(SQLiteObjectsHelper.TMunicipios._ID).append(" = MUA.").append(SQLiteObjectsHelper.TMunicipioAtual.COLUMN_MUNICIPIOID);
+        sb.append(SQLiteObjectsHelper.TMunicipios.TABLE_NAME).append(" MUN ");
+        sb.append("WHERE MUN.").append(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL).append(" = 1 ");
         return sb.toString();
     }
 
@@ -214,7 +238,7 @@ public class QueryBuilder {
         if(municipioID != null) {
             sb.append(" WHERE ").append(SQLiteObjectsHelper.TMunicipios._ID).append(" = ").append(municipioID.toString());
         }
-        sb.append(" ORDER BY ").append(SQLiteObjectsHelper.TMunicipios.COLUMN_MUNNOME).append(" DESC");
+        sb.append(" ORDER BY ").append(SQLiteObjectsHelper.TMunicipios.COLUMN_MUNNOME).append(" ASC ");
         return sb.toString();
     }
 }

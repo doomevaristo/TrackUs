@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/TCC001.iml" filepath="$PROJECT_DIR$/TCC001.iml" />
       <module fileurl="file://C:\Users\marcos.evaristo\StudioProjects\TrackUs\TCC001.iml" filepath="C:\Users\marcos.evaristo\StudioProjects\TrackUs\TCC001.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TrackUs.iml" filepath="$PROJECT_DIR$/TrackUs.iml" />
+      <module fileurl="file://D:\AndroidStudioProjects\TCC001\TrackUs.iml" filepath="D:\AndroidStudioProjects\TCC001\TrackUs.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

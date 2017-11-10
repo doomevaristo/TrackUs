@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#427af4</color>
-    <color name="colorPrimaryDark">#2a4e9e</color>
-    <color name="textColorPrimary">#FFFFFF</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="colorAccent">#6394e2</color>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#1B5E20</color>
+    <color name="textColorPrimary">#829683</color>
+    <color name="windowBackground">#C8E6C9</color>
+    <color name="colorAccent">#43A047</color>
+
+    <color name="municipioAtualDetColor">#E0E0E0</color>
 </resources>
