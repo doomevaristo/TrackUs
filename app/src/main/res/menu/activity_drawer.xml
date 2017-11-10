@@ -7,7 +7,7 @@
         <menu>
             <item
                 android:id="@+id/nav_alterar_municipio"
-                android:icon="@drawable/ic_compare_arrows_black_24dp"
+                android:icon="@drawable/ic_swap_horiz_black_24dp"
                 android:title="@string/alterar_municipio_menu" />
         </menu>
     </item>
