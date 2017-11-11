@@ -30,7 +30,7 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
     Double latitudeBlumenau = -26.9053897;
     Double longitudeBlumenau = -49.0935486;
     float zoom = 14.0f;
-    private GoogleMap mMap;
+    private GoogleMap gMap;
     private List<Marker> lMarker;
     private Linha linha;
     Query queryRef;
@@ -50,8 +50,8 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
     }
 
     private void setaCarrosNoMapa(Bundle params, GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeBlumenau, longitudeBlumenau), zoom));
+        gMap = googleMap;
+        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeBlumenau, longitudeBlumenau), zoom));
         linha = (Linha) params.get("linha");
         if(linha != null) {
             queryRef = FirebaseUtils.getLinhasReference().child(linha.getNumero()).child("carros");
@@ -69,7 +69,7 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                             Double latitude = Double.parseDouble(umCarro.getLatitude());
                             Double longitude = Double.parseDouble(umCarro.getLongitude());
                             LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                            lMarker.add(mMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker))));
+                            lMarker.add(gMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker))));
                         }
                     }
                 }
