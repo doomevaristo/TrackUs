@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -26,12 +27,12 @@ import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
 import com.marcosevaristo.tcc001.adapters.NumericKeyBoardTransformationMethod;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 import com.marcosevaristo.tcc001.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class AbaBuscar extends Fragment {
     private View view;
     private ListView lView;
     private LinhasAdapter adapter;
-    private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
+    private List<Linha> lLinhas;
     private ProgressBar progressBar;
     private String ultimaBusca;
 
@@ -71,11 +72,11 @@ public class AbaBuscar extends Fragment {
 
         List<Linha> lLinhasSalvas = QueryBuilder.getLinhas(argBusca);
         if(CollectionUtils.isNotEmpty(lLinhasSalvas)) {
-            lLinhas = new ListaLinhasDTO();
-            lLinhas.addLinhas(lLinhasSalvas);
+            lLinhas = new ArrayList<>();
+            lLinhas.addAll(lLinhasSalvas);
             setupListAdapter();
         } else {
-            FirebaseUtils.getLinhasReference().child(argBusca).getRef().addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
+            FirebaseUtils.getLinhasReference(null).orderByChild("numero").equalTo(argBusca).addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         }
         ultimaBusca = argBusca;
         progressBar.setVisibility(View.GONE);
@@ -85,15 +86,15 @@ public class AbaBuscar extends Fragment {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> mapValues = (Map<String, Object>) dataSnapshot.getValue();
-                if (mapValues != null) {
-                    lLinhas = new ListaLinhasDTO();
-                    lLinhas.addLinhas(Linha.converteMapParaListaLinhas(mapValues));
-                    if(CollectionUtils.isNotEmpty(lLinhas.getlLinhas())) {
-                        for(Linha umaLinha : lLinhas.getlLinhas()) {
-                            umaLinha.setMunicipio(App.getMunicipio());
-                        }
-                        QueryBuilder.insereLinhas(lLinhas.getlLinhas());
+                if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
+                    lLinhas = new ArrayList<>();
+                    for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
+                        Linha umaLinha = umDataSnapshot.getValue(Linha.class);
+                        umaLinha.setMunicipio(App.getMunicipio());
+                        lLinhas.add(umaLinha);
+                    }
+                    if(CollectionUtils.isNotEmpty(lLinhas)) {
+                        QueryBuilder.insereLinhas(lLinhas);
                     }
                     setupListAdapter();
                 } else {
@@ -110,7 +111,7 @@ public class AbaBuscar extends Fragment {
     }
 
     private void setupListAdapter() {
-        adapter = new LinhasAdapter(R.layout.item_da_busca, lLinhas.getlLinhas());
+        adapter = new LinhasAdapter(R.layout.item_da_busca, lLinhas);
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
     }

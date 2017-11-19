@@ -3,6 +3,7 @@ package com.marcosevaristo.tcc001;
 import android.app.Application;
 import android.content.Context;
 import android.provider.Settings;
+import android.widget.Toast;
 
 import com.marcosevaristo.tcc001.database.SQLiteHelper;
 import com.marcosevaristo.tcc001.model.Municipio;
@@ -31,5 +32,9 @@ public class App extends Application {
     }
     public static void setMunicipio(Municipio municipio) {
         App.municipio = municipio;
+    }
+
+    public static void toast(int stringID, String... params) {
+        Toast.makeText(context, context.getString(stringID, params), Toast.LENGTH_SHORT).show();
     }
 }

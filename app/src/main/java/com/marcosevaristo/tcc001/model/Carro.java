@@ -13,8 +13,7 @@ public class Carro implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    public Carro() {
-    }
+    public Carro() {}
 
     public Carro(String id, String longitude, String latitude, String location) {
         this.id = id;

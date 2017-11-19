@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.firebase.database.DatabaseReference;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.Municipio;
@@ -32,11 +31,12 @@ public class QueryBuilder {
             for (int i = 0; i < cursor.getCount(); i++) {
                 linhaAux = new Linha();
                 linhaAux.setIdSql(cursor.getLong(0));
-                linhaAux.setNumero(cursor.getString(1));
-                linhaAux.setTitulo(cursor.getString(2));
-                linhaAux.setSubtitulo(cursor.getString(3));
-                linhaAux.setMunicipio(new Municipio(cursor.getLong(4)));
-                linhaAux.setEhFavorito(NumberUtils.INTEGER_ONE.equals(cursor.getInt(5)));
+                linhaAux.setId(cursor.getString(1));
+                linhaAux.setNumero(cursor.getString(2));
+                linhaAux.setTitulo(cursor.getString(3));
+                linhaAux.setSubtitulo(cursor.getString(4));
+                linhaAux.setMunicipio(getMunicipios(cursor.getLong(5)).get(0));
+                linhaAux.setEhFavorito(NumberUtils.INTEGER_ONE.equals(cursor.getInt(6)));
                 lLinhas.add(linhaAux);
                 cursor.moveToNext();
             }
@@ -67,10 +67,11 @@ public class QueryBuilder {
         for (int i = 0; i < cursor.getCount(); i++) {
             linhaAux = new Linha();
             linhaAux.setIdSql(cursor.getLong(0));
-            linhaAux.setNumero(cursor.getString(1));
-            linhaAux.setTitulo(cursor.getString(2));
-            linhaAux.setSubtitulo(cursor.getString(3));
-            linhaAux.setMunicipio(new Municipio(cursor.getLong(4)));
+            linhaAux.setId(cursor.getString(1));
+            linhaAux.setNumero(cursor.getString(2));
+            linhaAux.setTitulo(cursor.getString(3));
+            linhaAux.setSubtitulo(cursor.getString(4));
+            linhaAux.setMunicipio(getMunicipios(cursor.getLong(5)).get(0));
             linhaAux.setEhFavorito(true);
             lLinhas.add(linhaAux);
             cursor.moveToNext();
@@ -117,13 +118,13 @@ public class QueryBuilder {
         whereClause.append(SQLiteObjectsHelper.TMunicipios._ID).append(" = ?");
 
         db.beginTransaction();
-        db.update(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, values, whereClause.toString(), new String[]{novoMunicipioAtual.getId().toString()});
+        db.update(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, values, whereClause.toString(), new String[]{novoMunicipioAtual.getIdSql().toString()});
 
         if(municipioAtualOld != null) {
             values = new ContentValues();
             values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL, NumberUtils.INTEGER_ZERO);
 
-            db.update(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, values, whereClause.toString(), new String[]{municipioAtualOld.getId().toString()});
+            db.update(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, values, whereClause.toString(), new String[]{municipioAtualOld.getIdSql().toString()});
         }
 
         db.setTransactionSuccessful();
@@ -138,9 +139,10 @@ public class QueryBuilder {
 
             if(cursor.getCount() > 0) {
                 municipioAux = new Municipio();
-                municipioAux.setId(cursor.getLong(0));
-                municipioAux.setNome(cursor.getString(1));
-                municipioAux.setEhMunicipioAtual(NumberUtils.INTEGER_ONE.equals(cursor.getInt(2)));
+                municipioAux.setIdSql(cursor.getLong(0));
+                municipioAux.setId(cursor.getString(1));
+                municipioAux.setNome(cursor.getString(2));
+                municipioAux.setEhMunicipioAtual(NumberUtils.INTEGER_ONE.equals(cursor.getInt(3)));
             }
 
             cursor.close();
@@ -162,20 +164,21 @@ public class QueryBuilder {
         if(CollectionUtils.isNotEmpty(linhasGravadas)) {
             mLinhasAux = new HashMap<>();
             for(Linha umaLinhaGravada : linhasGravadas) {
-                mLinhasAux.put(umaLinhaGravada.getNumero()+"|"+umaLinhaGravada.getMunicipio().getId(), umaLinhaGravada);
+                mLinhasAux.put(umaLinhaGravada.getNumero()+"|"+umaLinhaGravada.getMunicipio().getIdSql(), umaLinhaGravada);
             }
         }
 
         ContentValues values = new ContentValues();
         db.beginTransaction();
         for (Linha umaLinha : lLinhas) {
-            if(mLinhasAux != null && mLinhasAux.get(umaLinha.getNumero()+"|"+umaLinha.getMunicipio().getId()) != null) {
+            if(mLinhasAux != null && mLinhasAux.get(umaLinha.getNumero()+"|"+umaLinha.getMunicipio().getIdSql()) != null) {
                 continue;
             }
             values.put(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO, umaLinha.getNumero());
+            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_IDFIREBASE, umaLinha.getId());
             values.put(SQLiteObjectsHelper.TLinhas.COLUMN_TITULO, umaLinha.getTitulo());
             values.put(SQLiteObjectsHelper.TLinhas.COLUMN_SUBTITULO, umaLinha.getSubtitulo());
-            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_MUNICIPIO, App.getMunicipio().getId());
+            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_MUNICIPIO, App.getMunicipio().getIdSql());
             umaLinha.setIdSql(db.insert(SQLiteObjectsHelper.TLinhas.TABLE_NAME, null, values));
         }
 
@@ -192,18 +195,20 @@ public class QueryBuilder {
         if(CollectionUtils.isNotEmpty(municipiosGravados)) {
             mMunicipiosAux = new HashMap<>();
             for(Municipio umMunicipioGravado : municipiosGravados) {
-                mMunicipiosAux.put(umMunicipioGravado.getId()+"|"+umMunicipioGravado.getNome(), umMunicipioGravado);
+                mMunicipiosAux.put(umMunicipioGravado.getIdSql()+"|"+umMunicipioGravado.getNome(), umMunicipioGravado);
             }
         }
 
         db.beginTransaction();
         for (Municipio umMunicipio : lMunicipiosAux) {
-            if(mMunicipiosAux != null && mMunicipiosAux.get(umMunicipio.getId()+"|"+umMunicipio.getNome()) != null) {
+            if(mMunicipiosAux != null && mMunicipiosAux.get(umMunicipio.getIdSql()+"|"+umMunicipio.getNome()) != null) {
                 continue;
             }
-            values.put(SQLiteObjectsHelper.TMunicipios._ID, umMunicipio.getId());
+            values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_IDFIREBASE, umMunicipio.getId());
             values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_MUNNOME, umMunicipio.getNome());
-            umMunicipio.setId(db.insert(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, null, values));
+            values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL,
+                    umMunicipio.isEhMunicipioAtual() ? NumberUtils.INTEGER_ONE : NumberUtils.INTEGER_ZERO);
+            umMunicipio.setIdSql(db.insert(SQLiteObjectsHelper.TMunicipios.TABLE_NAME, null, values));
         }
 
         db.setTransactionSuccessful();
@@ -218,11 +223,10 @@ public class QueryBuilder {
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
                 municipioAux = new Municipio();
-                municipioAux.setId(cursor.getLong(0));
-                municipioAux.setNome(cursor.getString(1));
-                if(App.getMunicipio() != null) {
-                    municipioAux.setEhMunicipioAtual(App.getMunicipio().getId().equals(municipioAux.getId()));
-                }
+                municipioAux.setIdSql(cursor.getLong(0));
+                municipioAux.setId(cursor.getString(1));
+                municipioAux.setNome(cursor.getString(2));
+                municipioAux.setEhMunicipioAtual(NumberUtils.INTEGER_ONE.equals(cursor.getInt(3)));
                 lLinhas.add(municipioAux);
                 cursor.moveToNext();
             }

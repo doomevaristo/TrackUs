@@ -1,24 +1,30 @@
 package com.marcosevaristo.tcc001.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.dto.ListaLinhasDTO;
+import com.marcosevaristo.tcc001.model.Linha;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AbaFavoritos extends Fragment{
     private View view;
     private ListView lView;
     private LinhasAdapter adapter;
-    private ListaLinhasDTO lLinhas = new ListaLinhasDTO();
+    private List<Linha> lLinhas;
 
     public AbaFavoritos() {}
 
@@ -37,14 +43,32 @@ public class AbaFavoritos extends Fragment{
 
     private void setupListLinhas() {
         lView = (ListView) view.findViewById(R.id.listaLinhasFavoritas);
-        lLinhas = new ListaLinhasDTO();
-        lLinhas.addLinhas(QueryBuilder.getFavoritos(null));
-        adapter = new LinhasAdapter(R.layout.item_dos_favoritos, lLinhas.getlLinhas());
+        lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
+        lLinhas = new ArrayList<>();
+        lLinhas.addAll(QueryBuilder.getFavoritos(null));
+        setupListAdapter();
+    }
+
+    private void setupListAdapter() {
+        adapter = new LinhasAdapter(R.layout.item_dos_favoritos, lLinhas);
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
     }
 
     public void atualizaFavoritos() {
         setupListLinhas();
+    }
+
+    private AdapterView.OnItemClickListener getOnItemClickListenerOpenMap() {
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(App.getAppContext(), Mapa.class);
+                Bundle bundleAux = new Bundle();
+                bundleAux.putSerializable("linha", (Linha)parent.getItemAtPosition(position));
+                intent.putExtras(bundleAux);
+                startActivity(intent);
+            }
+        };
     }
 }

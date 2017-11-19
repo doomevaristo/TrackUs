@@ -10,18 +10,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:paddingLeft="8dp"
-        android:textSize="22sp"/>
+        android:textSize="22sp"
+         />
 
     <TextView
         android:id="@+id/linhaBuscadaSubText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:paddingLeft="8dp"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <com.marcosevaristo.tcc001.components.BotaoFavorito
         android:id="@+id/botaoFavorito"

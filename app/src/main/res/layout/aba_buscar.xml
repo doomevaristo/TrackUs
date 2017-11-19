@@ -7,17 +7,15 @@
     android:orientation="vertical"
     tools:context="com.marcosevaristo.tcc001.fragments.AbaBuscar">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
+    <include
+        layout="@layout/progress_bar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content"/>
 
     <ListView
         android:id="@+id/listaLinhas"
         android:layout_marginTop="@dimen/marginTopListItens"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/listItensHeight" />
 
     <EditText

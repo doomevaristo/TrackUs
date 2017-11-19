@@ -7,20 +7,10 @@ import com.marcosevaristo.tcc001.App;
 public class FirebaseUtils {
 
     private static FirebaseDatabase database;
-    private static DatabaseReference databaseReferenceMunicipios;
-    private static DatabaseReference databaseReferenceLinhas;
 
     private static final String NODE_MUNICIPIOS = "municipios";
     private static final String NODE_LINHAS = "linhas";
-
-    public static void startReferenceLinhas() {
-        databaseReferenceLinhas = getDatabase().getReference().child(NODE_MUNICIPIOS)
-                .child(App.getMunicipio().getId().toString()).child(NODE_LINHAS);
-    }
-
-    private static void startReferenceMunicipios() {
-        databaseReferenceMunicipios = getDatabase().getReference().child(NODE_MUNICIPIOS);
-    }
+    private static final String NODE_CARROS = "carros";
 
     public static FirebaseDatabase getDatabase() {
         if(database == null) {
@@ -29,13 +19,30 @@ public class FirebaseUtils {
         return database;
     }
 
-    public static DatabaseReference getLinhasReference() {
-        if(databaseReferenceLinhas == null) startReferenceLinhas();
+    public static DatabaseReference getMunicipiosReference(String municipioID) {
+        DatabaseReference databaseReferenceMunicipios = getDatabase().getReference().child(NODE_MUNICIPIOS);
+        if(StringUtils.isNotBlank(municipioID)) {
+            databaseReferenceMunicipios = databaseReferenceMunicipios.child(municipioID);
+        }
+        return databaseReferenceMunicipios;
+    }
+
+    public static DatabaseReference getLinhasReference(String linhaID) {
+        DatabaseReference databaseReferenceLinhas = getMunicipiosReference(App.getMunicipio().getId()).child(NODE_LINHAS);
+        if(StringUtils.isNotBlank(linhaID)) {
+            databaseReferenceLinhas = databaseReferenceLinhas.child(linhaID);
+        }
         return databaseReferenceLinhas;
     }
 
-    public static DatabaseReference getMunicipiosReference() {
-        if(databaseReferenceMunicipios == null) startReferenceMunicipios();
-        return databaseReferenceMunicipios;
+    public static DatabaseReference getCarrosReference(String linhaID, String carroID) {
+        DatabaseReference databaseReferenceCarros = null;
+        if(StringUtils.isNotBlank(linhaID)) {
+            databaseReferenceCarros = getLinhasReference(linhaID).child(NODE_CARROS);
+            if(StringUtils.isNotBlank(carroID)) {
+                databaseReferenceCarros = databaseReferenceCarros.child(carroID);
+            }
+        }
+        return databaseReferenceCarros;
     }
 }

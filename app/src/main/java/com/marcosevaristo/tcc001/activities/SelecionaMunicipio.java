@@ -17,11 +17,11 @@ import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.adapters.MunicipiosAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.dto.ListaMunicipiosDTO;
 import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
 
     private ListView lMunicipiosView;
     private ProgressBar progressBar;
-    private ListaMunicipiosDTO lMunicipios;
+    private List<Municipio> lMunicipios;
     private MunicipiosAdapter adapter;
 
     @Override
@@ -54,11 +54,11 @@ public class SelecionaMunicipio extends AppCompatActivity {
 
         List<Municipio> lMunicipiosSalvos = QueryBuilder.getMunicipios(null);
         if(CollectionUtils.isNotEmpty(lMunicipiosSalvos)) {
-            lMunicipios = new ListaMunicipiosDTO();
-            lMunicipios.addMunicipios(lMunicipiosSalvos);
+            lMunicipios = new ArrayList<>();
+            lMunicipios.addAll(lMunicipiosSalvos);
             setupListAdapter();
         } else {
-            FirebaseUtils.getMunicipiosReference().getRef().addListenerForSingleValueEvent(getEventoBuscaMunicipiosFirebase());
+            FirebaseUtils.getMunicipiosReference(null).addListenerForSingleValueEvent(getEventoBuscaMunicipiosFirebase());
         }
     }
 
@@ -66,12 +66,13 @@ public class SelecionaMunicipio extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Map<String, Object>> lMapValues = (List<Map<String, Object>>) dataSnapshot.getValue();
-                if (lMapValues != null) {
-                    lMunicipios = new ListaMunicipiosDTO();
-                    lMunicipios.addMunicipios(Municipio.converteListMapParaListaMunicipios(lMapValues));
-                    if(CollectionUtils.isNotEmpty(lMunicipios.getlMunicipios())) {
-                        QueryBuilder.insereMunicipios(lMunicipios.getlMunicipios());
+                if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
+                    lMunicipios = new ArrayList<>();
+                    for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
+                        lMunicipios.add(umDataSnapshot.getValue(Municipio.class));
+                    }
+                    if(CollectionUtils.isNotEmpty(lMunicipios)) {
+                        QueryBuilder.insereMunicipios(lMunicipios);
                     }
                     setupListAdapter();
                 } else {
@@ -88,7 +89,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
     }
 
     private void setupListAdapter() {
-        adapter = new MunicipiosAdapter(R.layout.municipio_item, lMunicipios.getlMunicipios());
+        adapter = new MunicipiosAdapter(R.layout.municipio_item, lMunicipios);
         adapter.notifyDataSetChanged();
         lMunicipiosView.setAdapter(adapter);
         progressBar.setVisibility(View.GONE);
@@ -98,7 +99,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Municipio municipioSelecionado = lMunicipios.getlMunicipios().get(position);
+                Municipio municipioSelecionado = lMunicipios.get(position);
                 QueryBuilder.updateMunicipioAtual(municipioSelecionado);
                 App.setMunicipio(municipioSelecionado);
 

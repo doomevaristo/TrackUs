@@ -26,4 +26,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="opcoes_group_menu">Opções</string>
     <string name="alterar_municipio_menu">Alterar município</string>
+    <string name="nao_achou_municipio_no_mapa">Não foi possível encontrar o município %1$s no mapa.</string>
 </resources>

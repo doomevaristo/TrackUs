@@ -8,23 +8,19 @@ import java.util.Map;
 
 public class Linha implements Serializable {
     private Long idSql;
+    private String id;
     private Municipio municipio;
     private String numero;
     private String titulo;
     private String subtitulo;
-    private List<Carro> carros;
+    private Map<String, Carro> carros;
+    private List<String> rota;
+
     private boolean ehFavorito = false;
 
     private static final long serialVersionUID = 1L;
 
     public Linha() {
-    }
-
-    public Linha(List<Carro> carros, String numero, String titulo, String subtitulo) {
-        this.carros = carros;
-        this.numero = numero;
-        this.titulo = titulo;
-        this.subtitulo = subtitulo;
     }
 
     public Long getIdSql() {
@@ -59,77 +55,12 @@ public class Linha implements Serializable {
         this.subtitulo = subtitulo;
     }
 
-    public List<Carro> getCarros() {
+    public Map<String, Carro> getCarros() {
         return carros;
     }
 
-    public void setCarros(List<Carro> carros) {
+    public void setCarros(Map<String, Carro> carros) {
         this.carros = carros;
-    }
-
-    public static List<Linha> converteMapParaListaLinhas(Map<String, Object> lMapLinhas) {
-        List<Linha> lLinhas = new ArrayList<>();
-        Linha linhaAux = new Linha();
-        boolean resultadoUnico = false;
-        for(String umaKeyAux : lMapLinhas.keySet()) {
-            if(lMapLinhas.get(umaKeyAux) instanceof Map) {
-                Map<String, Object> umaLinha = (Map<String, Object>) lMapLinhas.get(umaKeyAux);
-                linhaAux = new Linha();
-                for(String umAttr : umaLinha.keySet()) {
-                    montaUmAtributoDaLinha(linhaAux, umAttr, umaLinha.get(umAttr));
-                }
-                lLinhas.add(linhaAux);
-            } else {
-                resultadoUnico = true;
-                montaUmAtributoDaLinha(linhaAux, umaKeyAux, lMapLinhas.get(umaKeyAux));
-            }
-        }
-        if(resultadoUnico) lLinhas.add(linhaAux);
-        return lLinhas;
-    }
-
-    private static void montaUmAtributoDaLinha(Linha linhaAux, String atributo, Object valor) {
-        switch(atributo) {
-            case "numero":
-                linhaAux.setNumero(valor.toString());
-                break;
-            case "titulo":
-                linhaAux.setTitulo(valor.toString());
-                break;
-            case "subtitulo":
-                linhaAux.setSubtitulo(valor.toString());
-                break;
-            case "carros":
-                Collection<Map> mapCarros = ((Map) valor).values();
-                List<Carro> lCarrosAux = new ArrayList<>();
-                for(Map umCarroMap : mapCarros) {
-                    Carro carroAux = new Carro();
-                    for(Object umKey : umCarroMap.keySet()) {
-                        String umKeyStr = umKey.toString();
-                        switch (umKeyStr) {
-                            case "location":
-                                carroAux.setLocation(umCarroMap.get(umKey).toString());
-                                break;
-                            case "latitude":
-                                carroAux.setLatitude(umCarroMap.get(umKey).toString());
-                                break;
-                            case "longitude":
-                                carroAux.setLongitude(umCarroMap.get(umKey).toString());
-                                break;
-                            case "id":
-                                carroAux.setId(umCarroMap.get(umKey).toString());
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    lCarrosAux.add(carroAux);
-                }
-                linhaAux.setCarros(lCarrosAux);
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -159,5 +90,21 @@ public class Linha implements Serializable {
 
     public void setEhFavorito(boolean ehFavorito) {
         this.ehFavorito = ehFavorito;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<String> getRota() {
+        return rota;
+    }
+
+    public void setRota(List<String> rota) {
+        this.rota = rota;
     }
 }

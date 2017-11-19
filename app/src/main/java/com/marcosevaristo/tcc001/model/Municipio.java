@@ -1,35 +1,30 @@
 package com.marcosevaristo.tcc001.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class Municipio implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private Long idSql;
+    private String id;
     private String nome;
-    private List<Linha> lLinhas;
+    private Map<String, Linha> linhas;
     private boolean ehMunicipioAtual;
     private boolean selecionado = false;
 
     public Municipio(){}
 
-    public Municipio(Long id) {
-        this.id = id;
+    public Municipio(Long idSql) {
+        this.idSql = idSql;
     }
 
-    public Municipio(Long id, String nome) {
-        this.id = id;
-        this.nome = nome;
-    }
-    public Long getId() {
-        return id;
+    public Long getIdSql() {
+        return idSql;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdSql(Long idSql) {
+        this.idSql = idSql;
     }
     public String getNome() {
         return nome;
@@ -39,12 +34,12 @@ public class Municipio implements Serializable {
         this.nome = nome;
     }
 
-    public List<Linha> getlLinhas() {
-        return lLinhas;
+    public Map<String, Linha> getLinhas() {
+        return linhas;
     }
 
-    public void setlLinhas(List<Linha> lLinhas) {
-        this.lLinhas = lLinhas;
+    public void setLinhas(Map<String, Linha> linhas) {
+        this.linhas = linhas;
     }
 
     public boolean isEhMunicipioAtual() {
@@ -63,44 +58,18 @@ public class Municipio implements Serializable {
         this.selecionado = selecionado;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.id).append(" - ").append(this.nome);
+        sb.append(this.idSql).append(" - ").append(this.nome);
         return sb.toString();
-    }
-
-    public static List<Municipio> converteListMapParaListaMunicipios(List<Map<String, Object>> mapValues) {
-        List<Municipio> lMunicipios = new ArrayList<>();
-        Long idAux = null;
-        String nomeAux = null;
-        List<Linha> listLinhas = null;
-        Municipio municipioAux;
-
-        for(Map<String, Object> umMunicipio : mapValues) {
-            if(umMunicipio != null) {
-                for(String umAtributoMun : umMunicipio.keySet()) {
-                    switch(umAtributoMun) {
-                        case "id":
-                            idAux = (Long) umMunicipio.get(umAtributoMun);
-                            break;
-                        case "nome":
-                            nomeAux = umMunicipio.get(umAtributoMun).toString();
-                            break;
-                        case "linhas":
-                            listLinhas = Linha.converteMapParaListaLinhas((Map)umMunicipio.get(umAtributoMun));
-                        default:
-                            break;
-                    }
-                }
-                municipioAux = new Municipio();
-                municipioAux.setId(idAux);
-                municipioAux.setNome(nomeAux);
-                municipioAux.setlLinhas(listLinhas);
-                lMunicipios.add(municipioAux);
-            }
-        }
-
-        return lMunicipios;
     }
 }
