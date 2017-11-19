@@ -88,11 +88,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onPageSelected(int position) {
-                /*if(position == 0) {
+                if(position == 0) {
                     ((AbaBuscar) adapter.getItem(position)).atualizaBusca();
                 } else if(position == 1) {
                     ((AbaFavoritos) adapter.getItem(position)).atualizaFavoritos();
-                }*/
+                }
             }
 
             @Override
