@@ -27,4 +27,9 @@
     <string name="opcoes_group_menu">Opções</string>
     <string name="alterar_municipio_menu">Alterar município</string>
     <string name="nao_achou_municipio_no_mapa">Não foi possível encontrar o município %1$s no mapa.</string>
+    <string name="permissoes_de_localizacao_ja_concedidas">As permissões necessárias de localização já estão concedidas.</string>
+    <string name="solicitando_permissoes">Solicitando permissões ao usuário</string>
+    <string name="aguardando_permissao_localizacao">Aguardando permissão de localização.</string>
+    <string name="permissoes_de_localizacao_inadequadas">As permissões necessárias são inadequadas, não será criado um dialog aqui.</string>
+    <string name="localizacao_necessaria">Para utilizar todas as funcionalidades do mapa é necessário ligar o GPS do celular.</string>
 </resources>
