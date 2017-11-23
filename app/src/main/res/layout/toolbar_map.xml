@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/toolbar_map_xml"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_map"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp">
+
+        <RelativeLayout
+            android:id="@+id/linhaMapaLayout"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/linhaMapaText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:textSize="22sp"/>
+
+            <TextView
+                android:id="@+id/linhaMapaSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linhaMapaText"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+</RelativeLayout>

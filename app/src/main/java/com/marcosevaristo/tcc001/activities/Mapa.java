@@ -1,13 +1,16 @@
 package com.marcosevaristo.tcc001.activities;
 
-import android.content.Context;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -31,7 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
-import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
@@ -42,18 +44,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mapa extends FragmentActivity implements OnMapReadyCallback {
+public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
 
-
+    private Toolbar toolbar;
     private GoogleMap gMap;
     private List<Marker> lMarker;
     private Linha linha;
+
+    private static final String[] PERMISSOES_NECESSARIAS_MAPA = {android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION};
+    private static final int INT_REQUISICAO_PERMISSOES = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mapa);
-        //App.solicitaPermissoes(this);
+        linha = (Linha) getIntent().getExtras().get("linha");
+        setupToolbar();
         solicitaLocalizacao();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -61,9 +68,18 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        linha = (Linha) getIntent().getExtras().get("linha");
         setaCarrosNoMapa(googleMap);
         setupLocationsOnMap();
+    }
+
+    private void setupToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar_map);
+        toolbar.setTitle("");
+        TextView textViewLinhaTitulo = (TextView) findViewById(R.id.linhaMapaText);
+        TextView textViewLinhaSubTitulo = (TextView) findViewById(R.id.linhaMapaSubText);
+
+        textViewLinhaTitulo.setText(linha.getNumero()+" - "+linha.getTitulo());
+        textViewLinhaSubTitulo.setText(linha.getSubtitulo());
     }
 
     private void setaCarrosNoMapa(GoogleMap googleMap) {
@@ -76,6 +92,32 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                 gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
             }
         }
+        solicitaPermissoes();
+    }
+
+    private void solicitaPermissoes() {
+        while (!possuiPermissoesNecessariasMapa()) {
+            ActivityCompat.requestPermissions(this, PERMISSOES_NECESSARIAS_MAPA, INT_REQUISICAO_PERMISSOES);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean possuiPermissoesNecessariasMapa() {
+        boolean possuiPermissoes = true;
+        for(String umaPermissao : PERMISSOES_NECESSARIAS_MAPA) {
+            possuiPermissoes = possuiPermissoes &&
+                    ContextCompat.checkSelfPermission(App.getAppContext(), umaPermissao) == PackageManager.PERMISSION_GRANTED;
+            if(!possuiPermissoes) {
+                break;
+            }
+        }
+        if(possuiPermissoes) gMap.setMyLocationEnabled(true);
+
+        return possuiPermissoes;
     }
 
     private void setupLocationsOnMap() {
@@ -139,7 +181,8 @@ public class Mapa extends FragmentActivity implements OnMapReadyCallback {
                             Double latitude = Double.parseDouble(umCarro.getLatitude());
                             Double longitude = Double.parseDouble(umCarro.getLongitude());
                             LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                            lMarker.add(gMap.addMarker(new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker))));
+                            MarkerOptions umMarker = new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
+                            lMarker.add(gMap.addMarker(umMarker));
                         }
                     }
                 }

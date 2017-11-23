@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
@@ -76,7 +77,11 @@ public class AbaBuscar extends Fragment {
             lLinhas.addAll(lLinhasSalvas);
             setupListAdapter();
         } else {
-            FirebaseUtils.getLinhasReference(null).orderByChild("numero").equalTo(argBusca).addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
+            Query query = FirebaseUtils.getLinhasReference(null).orderByChild("numero");
+            if(!StringUtils.isNotBlank(argBusca) && !argBusca.trim().equals(StringUtils.emptyString())){
+                query = query.equalTo(argBusca);
+            }
+            query.addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         }
         ultimaBusca = argBusca;
         progressBar.setVisibility(View.GONE);
