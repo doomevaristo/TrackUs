@@ -1,10 +1,14 @@
 package com.marcosevaristo.tcc001.activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        solicitaPermissoes();
         App.setMunicipio(QueryBuilder.getMunicipioAtual());
         if(App.getMunicipio() == null) {
             startActivity(new Intent(App.getAppContext(), SelecionaMunicipio.class));
@@ -37,6 +42,27 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
             setupTabLayout();
         }
+    }
+
+    public boolean solicitaPermissoes() {
+        while (!possuiPermissoesNecessarias()) {
+            ActivityCompat.requestPermissions(this, App.getPermissoesNecessarias(), 0);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    private boolean possuiPermissoesNecessarias() {
+        boolean possuiPermissoes = true;
+        for(String umaPermissao : App.getPermissoesNecessarias()) {
+            possuiPermissoes = possuiPermissoes && ContextCompat.checkSelfPermission(App.getAppContext(), umaPermissao) == PackageManager.PERMISSION_GRANTED;
+            if(!possuiPermissoes) break;
+        }
+        return possuiPermissoes;
     }
 
     @Override

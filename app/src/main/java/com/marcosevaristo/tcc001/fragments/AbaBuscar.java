@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -35,8 +34,6 @@ import com.marcosevaristo.tcc001.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 
 public class AbaBuscar extends Fragment {
 

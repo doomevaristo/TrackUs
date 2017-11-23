@@ -4,6 +4,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +17,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -29,6 +32,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -50,10 +54,9 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap gMap;
     private List<Marker> lMarker;
     private Linha linha;
+    private boolean permitiuLocalizacao;
 
-    private static final String[] PERMISSOES_NECESSARIAS_MAPA = {android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION};
-    private static final int INT_REQUISICAO_PERMISSOES = 0;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_mapa);
         linha = (Linha) getIntent().getExtras().get("linha");
         setupToolbar();
-        solicitaLocalizacao();
+        solicitaAtivarLocalizacao();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
@@ -92,31 +95,34 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
             }
         }
-        solicitaPermissoes();
+        permitiuLocalizacao = solicitaPermissoes();
+        if (permitiuLocalizacao) {
+            try{
+                gMap.setMyLocationEnabled(true);
+            } catch(SecurityException e) {
+
+            }
+        }
     }
 
-    private void solicitaPermissoes() {
-        while (!possuiPermissoesNecessariasMapa()) {
-            ActivityCompat.requestPermissions(this, PERMISSOES_NECESSARIAS_MAPA, INT_REQUISICAO_PERMISSOES);
+    public boolean solicitaPermissoes() {
+        while (!possuiPermissoesNecessarias()) {
+            ActivityCompat.requestPermissions(this, App.getPermissoesNecessarias(), 0);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
-    private boolean possuiPermissoesNecessariasMapa() {
+    private boolean possuiPermissoesNecessarias() {
         boolean possuiPermissoes = true;
-        for(String umaPermissao : PERMISSOES_NECESSARIAS_MAPA) {
-            possuiPermissoes = possuiPermissoes &&
-                    ContextCompat.checkSelfPermission(App.getAppContext(), umaPermissao) == PackageManager.PERMISSION_GRANTED;
-            if(!possuiPermissoes) {
-                break;
-            }
+        for(String umaPermissao : App.getPermissoesNecessarias()) {
+            possuiPermissoes = possuiPermissoes && ContextCompat.checkSelfPermission(App.getAppContext(), umaPermissao) == PackageManager.PERMISSION_GRANTED;
+            if(!possuiPermissoes) break;
         }
-        if(possuiPermissoes) gMap.setMyLocationEnabled(true);
-
         return possuiPermissoes;
     }
 
@@ -181,9 +187,21 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                             Double latitude = Double.parseDouble(umCarro.getLatitude());
                             Double longitude = Double.parseDouble(umCarro.getLongitude());
                             LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                            MarkerOptions umMarker = new MarkerOptions().position(posicaoUmCarro).title(linha.toString()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
+                            MarkerOptions umMarker = new MarkerOptions().position(posicaoUmCarro).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
                             lMarker.add(gMap.addMarker(umMarker));
                         }
+                    }
+                    if(permitiuLocalizacao) {
+                        try {
+                            mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    if (location != null) {
+                                        calculaTempoChegadaSetaMarkersTitles(location.getLatitude(), location.getLongitude());
+                                    }
+                                }
+                            });
+                        } catch (SecurityException e) {}
                     }
                 }
             }
@@ -195,7 +213,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         };
     }
 
-    private void solicitaLocalizacao() {
+    private void solicitaAtivarLocalizacao() {
         GoogleApiClient googleApiClient = new GoogleApiClient.Builder(App.getAppContext())
                 .addApi(LocationServices.API).build();
         googleApiClient.connect();
@@ -234,5 +252,15 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 }
             }
         });
+    }
+
+    private void calculaTempoChegadaSetaMarkersTitles(double latitudeAtual, double longitudeAtual) {
+        if(CollectionUtils.isNotEmpty(lMarker)) {
+            for(Marker umMarker : lMarker) {
+                float[] distancia = new float[1];
+                Location.distanceBetween(umMarker.getPosition().latitude, umMarker.getPosition().longitude, latitudeAtual, longitudeAtual, distancia);
+                umMarker.setTitle(String.valueOf(distancia[0]));
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@ public class App extends Application {
     private static Context context;
     private static SQLiteHelper sqLiteHelper;
     private static Municipio municipio;
-
+    private static final String[] PERMISSOES_NECESSARIAS = {android.Manifest.permission.READ_PHONE_STATE, android.Manifest.permission.ACCESS_FINE_LOCATION};
 
     public void onCreate() {
         super.onCreate();
@@ -41,5 +41,8 @@ public class App extends Application {
 
     public static void toast(int stringID, String... params) {
         Toast.makeText(context, context.getString(stringID, params), Toast.LENGTH_SHORT).show();
+    }
+    public static String[] getPermissoesNecessarias() {
+        return PERMISSOES_NECESSARIAS;
     }
 }
