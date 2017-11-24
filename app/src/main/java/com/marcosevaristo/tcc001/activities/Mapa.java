@@ -1,5 +1,7 @@
 package com.marcosevaristo.tcc001.activities;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -8,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -95,16 +98,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
             }
         }
-        while(!App.isPossuiPermissoes()) {
-            App.solicitaPermissoes(this);
-        }
-        if(App.isPossuiPermissoes()) {
-            try{
-                gMap.setMyLocationEnabled(true);
-            } catch(SecurityException e) {
-
-            }
-        }
+        verificaPermissoes();
     }
 
     private void setupLocationsOnMap() {
@@ -182,7 +176,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                                     }
                                 }
                             });
-                        } catch (SecurityException e) {}
+                        } catch (SecurityException e) {e.printStackTrace();}
                     }
                 }
             }
@@ -242,6 +236,45 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 Location.distanceBetween(umMarker.getPosition().latitude, umMarker.getPosition().longitude, latitudeAtual, longitudeAtual, distancia);
                 umMarker.setTitle(String.valueOf(distancia[0]));
             }
+        }
+    }
+
+    public boolean verificaPermissoes() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Titulo teste")
+                        .setMessage("Mensagem teste")
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(Mapa.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permitiuLocalizacao = ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                }
+                return;
+            }
+
         }
     }
 }
