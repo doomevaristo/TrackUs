@@ -16,7 +16,10 @@ public class App extends Application {
     private static Context context;
     private static SQLiteHelper sqLiteHelper;
     private static Municipio municipio;
+
     private static final String[] PERMISSOES_NECESSARIAS = {android.Manifest.permission.READ_PHONE_STATE, android.Manifest.permission.ACCESS_FINE_LOCATION};
+    private static final int INT_REQUISICAO_PERMISSOES = 0;
+    private static boolean possuiPermissoes;
 
     public void onCreate() {
         super.onCreate();
@@ -42,7 +45,29 @@ public class App extends Application {
     public static void toast(int stringID, String... params) {
         Toast.makeText(context, context.getString(stringID, params), Toast.LENGTH_SHORT).show();
     }
-    public static String[] getPermissoesNecessarias() {
-        return PERMISSOES_NECESSARIAS;
+
+    public static boolean isPossuiPermissoes() {
+        return possuiPermissoes;
+    }
+
+    public static void solicitaPermissoes(Activity activity) {
+        while (!possuiPermissoesNecessarias()) {
+            ActivityCompat.requestPermissions(activity, PERMISSOES_NECESSARIAS, INT_REQUISICAO_PERMISSOES);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        possuiPermissoes = true;
+    }
+
+    private static boolean possuiPermissoesNecessarias() {
+        boolean possuiPermissoes = true;
+        for(String umaPermissao : PERMISSOES_NECESSARIAS) {
+            possuiPermissoes = possuiPermissoes && ContextCompat.checkSelfPermission(context, umaPermissao) == PackageManager.PERMISSION_GRANTED;
+            if(!possuiPermissoes) break;
+        }
+        return possuiPermissoes;
     }
 }

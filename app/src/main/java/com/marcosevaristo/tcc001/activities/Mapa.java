@@ -95,35 +95,16 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
             }
         }
-        permitiuLocalizacao = solicitaPermissoes();
-        if (permitiuLocalizacao) {
+        while(!App.isPossuiPermissoes()) {
+            App.solicitaPermissoes(this);
+        }
+        if(App.isPossuiPermissoes()) {
             try{
                 gMap.setMyLocationEnabled(true);
             } catch(SecurityException e) {
 
             }
         }
-    }
-
-    public boolean solicitaPermissoes() {
-        while (!possuiPermissoesNecessarias()) {
-            ActivityCompat.requestPermissions(this, App.getPermissoesNecessarias(), 0);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-
-    private boolean possuiPermissoesNecessarias() {
-        boolean possuiPermissoes = true;
-        for(String umaPermissao : App.getPermissoesNecessarias()) {
-            possuiPermissoes = possuiPermissoes && ContextCompat.checkSelfPermission(App.getAppContext(), umaPermissao) == PackageManager.PERMISSION_GRANTED;
-            if(!possuiPermissoes) break;
-        }
-        return possuiPermissoes;
     }
 
     private void setupLocationsOnMap() {
