@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.solicitaPermissoes(this);
         App.setMunicipio(QueryBuilder.getMunicipioAtual());
         if(App.getMunicipio() == null) {
             startActivity(new Intent(App.getAppContext(), SelecionaMunicipio.class));

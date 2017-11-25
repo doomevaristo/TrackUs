@@ -1,6 +1,7 @@
 package com.marcosevaristo.tcc001.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -20,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.internal.pe;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -67,14 +69,28 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_mapa);
         linha = (Linha) getIntent().getExtras().get("linha");
         setupToolbar();
-        solicitaAtivarLocalizacao();
+        permitiuLocalizacao = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if(!permitiuLocalizacao) {
+            verificaPermissoes();
+        } else {
+            solicitaAtivarLocalizacao();
+        }
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        setaCarrosNoMapa(googleMap);
+        gMap = googleMap;
+        try{
+            gMap.setMyLocationEnabled(permitiuLocalizacao);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        setaCarrosNoMapa();
         setupLocationsOnMap();
     }
 
@@ -88,8 +104,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         textViewLinhaSubTitulo.setText(linha.getSubtitulo());
     }
 
-    private void setaCarrosNoMapa(GoogleMap googleMap) {
-        gMap = googleMap;
+    private void setaCarrosNoMapa() {
         if (linha != null) {
             FirebaseUtils.getCarrosReference(linha.getId(), null).addValueEventListener(getEventoFirebaseGetCarros());
             if (CollectionUtils.isEmpty(linha.getRota())) {
@@ -98,7 +113,6 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
             }
         }
-        verificaPermissoes();
     }
 
     private void setupLocationsOnMap() {
@@ -156,28 +170,8 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         lCarros.add(umDataSnapshot.getValue(Carro.class));
                     }
-                    lMarker = new ArrayList<>();
-                    if(CollectionUtils.isNotEmpty(lCarros)) {
-                        for(Carro umCarro : lCarros) {
-                            Double latitude = Double.parseDouble(umCarro.getLatitude());
-                            Double longitude = Double.parseDouble(umCarro.getLongitude());
-                            LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                            MarkerOptions umMarker = new MarkerOptions().position(posicaoUmCarro).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
-                            lMarker.add(gMap.addMarker(umMarker));
-                        }
-                    }
-                    if(permitiuLocalizacao) {
-                        try {
-                            mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    if (location != null) {
-                                        calculaTempoChegadaSetaMarkersTitles(location.getLatitude(), location.getLongitude());
-                                    }
-                                }
-                            });
-                        } catch (SecurityException e) {e.printStackTrace();}
-                    }
+
+                    populaMarkersDoMapaComCarros(lCarros);
                 }
             }
 
@@ -186,6 +180,33 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
 
             }
         };
+    }
+
+    private void populaMarkersDoMapaComCarros(List<Carro> lCarros) {
+        lMarker = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(lCarros)) {
+            for(Carro umCarro : lCarros) {
+                Double latitude = Double.parseDouble(umCarro.getLatitude());
+                Double longitude = Double.parseDouble(umCarro.getLongitude());
+                LatLng posicaoUmCarro = new LatLng(latitude, longitude);
+                MarkerOptions umMarker = new MarkerOptions().position(posicaoUmCarro).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
+                lMarker.add(gMap.addMarker(umMarker));
+            }
+
+            if(permitiuLocalizacao) {
+                try {
+                    mFusedLocationClient = new FusedLocationProviderClient(Mapa.this);
+                    mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                calculaTempoChegadaSetaMarkersTitles(location.getLatitude(), location.getLongitude());
+                            }
+                        }
+                    });
+                } catch (SecurityException e) {e.printStackTrace();}
+            }
+        }
     }
 
     private void solicitaAtivarLocalizacao() {
@@ -239,7 +260,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    public boolean verificaPermissoes() {
+    public void verificaPermissoes() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 new AlertDialog.Builder(this)
@@ -253,14 +274,9 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                         })
                         .create()
                         .show();
-
-
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             }
-            return false;
-        } else {
-            return true;
         }
     }
 
@@ -271,6 +287,11 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permitiuLocalizacao = ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                }
+                if(permitiuLocalizacao) {
+                    solicitaAtivarLocalizacao();
+                } else {
+                    verificaPermissoes();
                 }
                 return;
             }
