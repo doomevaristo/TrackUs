@@ -8,7 +8,7 @@
 
     <ListView
         android:id="@+id/listaLinhasFavoritas"
-        android:layout_marginTop="@dimen/marginTopListItens"
+        android:layout_marginTop="@dimen/marginTopListItensComAppBarTabLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/listItensHeight" />
 

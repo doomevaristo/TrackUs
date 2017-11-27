@@ -33,6 +33,6 @@
     <string name="permissoes_de_localizacao_inadequadas">As permissões necessárias são inadequadas, não será criado um dialog aqui.</string>
     <string name="localizacao_necessaria">Para utilizar todas as funcionalidades do mapa é necessário ligar o GPS do celular.</string>
     <string name="ok">Ok</string>
-    <string name="selecione_um_municipio">Selecione um município</string>
     <string name="hint_seleciona_municipio">Selecione um município</string>
+    <string name="menu_alterar_municipio">Alterar município</string>
 </resources>

@@ -14,14 +14,14 @@
 
     <ListView
         android:id="@+id/listaLinhas"
-        android:layout_marginTop="@dimen/marginTopListItens"
+        android:layout_marginTop="@dimen/marginTopListItensComAppBarTabLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/listItensHeight" />
 
     <EditText
         android:id="@+id/etBusca"
         android:layout_width="@dimen/etBuscaWidth"
-        android:layout_height="@dimen/etBuscaHeight"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_alignParentBottom="true"

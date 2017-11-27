@@ -19,9 +19,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/linhaFavoritaText"
+        android:layout_toLeftOf="@id/linhaMunicipioText"
+        android:layout_toStartOf="@id/linhaMunicipioText"
         android:paddingLeft="8dp"
         android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/linhaMunicipioText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toLeftOf="@+id/btExcluir"
+        android:layout_toStartOf="@+id/btExcluir"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/fieldDefaultPadding"
+        android:textColor="@color/municipioAtualDetColor"
+        android:textSize="@dimen/textSmall" />
 
     <Button
         android:id="@+id/btExcluir"
@@ -32,6 +48,7 @@
         android:layout_centerVertical="true"
         android:background="@drawable/ic_excluir"
         android:layout_marginRight="10dp"
-        android:focusable="false"/>
+        android:layout_marginEnd="10dp"
+        android:focusable="false" />
 
 </RelativeLayout>

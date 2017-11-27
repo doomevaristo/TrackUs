@@ -56,13 +56,17 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
 
             TextView linhaBuscadaText = (TextView)view.findViewById(R.id.linhaBuscadaText);
             TextView linhaBuscadaSubText = (TextView)view.findViewById(R.id.linhaBuscadaSubText);
+
             TextView linhaFavoritaText = (TextView)view.findViewById(R.id.linhaFavoritaText);
             TextView linhaFavoritaSubText = (TextView)view.findViewById(R.id.linhaFavoritaSubText);
 
+            TextView municipio = (TextView) view.findViewById(R.id.linhaMunicipioText);
+
             ehBusca = linhaBuscadaText != null;
 
-            linhaHolder.texto = linhaBuscadaText != null ? linhaBuscadaText : linhaFavoritaText;
-            linhaHolder.subTexto = linhaBuscadaSubText != null ? linhaBuscadaSubText : linhaFavoritaSubText;
+            linhaHolder.texto = ehBusca ? linhaBuscadaText : linhaFavoritaText;
+            linhaHolder.subTexto = ehBusca ? linhaBuscadaSubText : linhaFavoritaSubText;
+            linhaHolder.municipio = municipio;
 
             view.setTag(linhaHolder);
         } else {
@@ -76,6 +80,7 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
             if(ehBusca) {
                 linhaHolder.botaoFavorito = setupBotaoFavorito(view, position);
             } else {
+                linhaHolder.municipio.setText(linha.getMunicipio().getNome());
                 linhaHolder.botaoExcluir = setupBotaoExcluir(view, position);
             }
         }
@@ -118,6 +123,7 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
     private static class LinhaHolder {
         TextView texto;
         TextView subTexto;
+        TextView municipio;
         BotaoFavorito botaoFavorito;
         Button botaoExcluir;
     }

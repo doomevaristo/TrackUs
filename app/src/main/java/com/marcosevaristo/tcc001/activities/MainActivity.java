@@ -18,6 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.widget.Button;
 
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
@@ -27,9 +30,11 @@ import com.marcosevaristo.tcc001.fragments.AbaBuscar;
 import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
+import java.lang.reflect.Field;
+
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
+    private boolean isMenuOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
