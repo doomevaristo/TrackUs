@@ -23,24 +23,27 @@
         android:layout_width="@dimen/etBuscaWidth"
         android:layout_height="@dimen/etBuscaHeight"
         android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
         android:focusable="true"
         android:maxLength="30"
         android:inputType="number"
         android:hint="@string/hintBuscar"
-        />
+         />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_search"
         android:src="@drawable/ic_fab_search"
-        android:layout_width="@dimen/fabDimen"
-        android:layout_height="@dimen/fabDimen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
-        app:fabSize="normal"
-        />
+        app:borderWidth="0dp"
+        app:fabSize="normal"/>
 
 </RelativeLayout>

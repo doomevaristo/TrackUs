@@ -253,9 +253,11 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
     private void calculaTempoChegadaSetaMarkersTitles(double latitudeAtual, double longitudeAtual) {
         if(CollectionUtils.isNotEmpty(lMarker)) {
             for(Marker umMarker : lMarker) {
-                float[] distancia = new float[1];
-                Location.distanceBetween(umMarker.getPosition().latitude, umMarker.getPosition().longitude, latitudeAtual, longitudeAtual, distancia);
-                umMarker.setTitle(String.valueOf(distancia[0]));
+                float[] distanciaArr = new float[1];
+                Location.distanceBetween(umMarker.getPosition().latitude, umMarker.getPosition().longitude, latitudeAtual, longitudeAtual, distanciaArr);
+                Float distancia = distanciaArr[0];
+
+                umMarker.setTitle(String.valueOf(distancia));
             }
         }
     }

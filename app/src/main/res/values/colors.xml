@@ -4,8 +4,11 @@
     <color name="colorPrimaryDark">#338a3e</color>
     <color name="colorPrimaryLight">#98ee99</color>
     <color name="textColorPrimary">#829683</color>
-    <color name="windowBackground">#C8E6C9</color>
     <color name="colorAccent">#43A047</color>
+    <color name="greyButtons">#eeeeee</color>
+    <color name="redButtons">#f44336</color>
+
+    <color name="white">#FFFFFF</color>
 
     <color name="municipioAtualDetColor">#E0E0E0</color>
 </resources>

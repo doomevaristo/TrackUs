@@ -38,6 +38,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
         setContentView(R.layout.activity_seleciona_municipio);
         setupToolbar();
         setupListMunicipios();
+        App.toast(R.string.hint_seleciona_municipio);
     }
 
     private void setupToolbar() {
@@ -105,6 +106,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
 
                 Toast.makeText(App.getAppContext(), App.getAppContext().getString(R.string.municipio_selecionado_sucesso, municipioSelecionado.getNome()), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(App.getAppContext(), MainActivity.class));
+                finish();
             }
         };
     }
