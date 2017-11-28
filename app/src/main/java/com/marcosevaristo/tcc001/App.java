@@ -1,14 +1,9 @@
 package com.marcosevaristo.tcc001;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.database.SQLiteHelper;
 import com.marcosevaristo.tcc001.model.Municipio;
 

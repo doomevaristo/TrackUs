@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_height="@dimen/defaultListItemHeight">
 
     <TextView
         android:id="@+id/linhaBuscadaText"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/linhaBuscadaText"
         android:paddingLeft="8dp"
         android:textSize="16sp" />
 

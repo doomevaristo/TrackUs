@@ -22,45 +22,10 @@ public class QueryBuilder {
 
     private QueryBuilder() {}
 
-    public static List<Linha> getLinhas(String nroLinha) {
+    public static List<Linha> getFavoritos(String idFirebase) {
         List<Linha> lLinhas = new ArrayList<>();
         Linha linhaAux;
-        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(getSelectAllLinhas(nroLinha), null);
-        if(cursor != null) {
-            cursor.moveToFirst();
-            for (int i = 0; i < cursor.getCount(); i++) {
-                linhaAux = new Linha();
-                linhaAux.setIdSql(cursor.getLong(0));
-                linhaAux.setId(cursor.getString(1));
-                linhaAux.setNumero(cursor.getString(2));
-                linhaAux.setTitulo(cursor.getString(3));
-                linhaAux.setSubtitulo(cursor.getString(4));
-                linhaAux.setMunicipio(getMunicipios(cursor.getLong(5)).get(0));
-                linhaAux.setEhFavorito(NumberUtils.INTEGER_ONE.equals(cursor.getInt(6)));
-                lLinhas.add(linhaAux);
-                cursor.moveToNext();
-            }
-
-            cursor.close();
-        }
-
-        return lLinhas;
-    }
-
-    private static String getSelectAllLinhas(String nroLinha) {
-        StringBuilder sb = new StringBuilder("SELECT ").append(SQLiteObjectsHelper.TLinhas.getInstance().getColunasParaSelect()).append(" FROM ");
-        sb.append(SQLiteObjectsHelper.TLinhas.TABLE_NAME).append(" LIN ");
-        if(StringUtils.isNotBlank(nroLinha)) {
-            sb.append(" WHERE ").append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" LIKE '%").append(nroLinha).append("%' ");
-        }
-        sb.append(" ORDER BY ").append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" DESC");
-        return sb.toString();
-    }
-
-    public static List<Linha> getFavoritos(String nroLinha) {
-        List<Linha> lLinhas = new ArrayList<>();
-        Linha linhaAux;
-        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(getSelectAllFavoritos(nroLinha), null);
+        Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(getSelectAllFavoritos(idFirebase), null);
         if(cursor != null) {
             cursor.moveToFirst();
         }
@@ -81,27 +46,35 @@ public class QueryBuilder {
         return lLinhas;
     }
 
-    private static String getSelectAllFavoritos(String nroLinha) {
-        StringBuilder sb = new StringBuilder("SELECT ").append(SQLiteObjectsHelper.TLinhas.getInstance().getColunasParaSelect()).append(" FROM ");
-        sb.append(SQLiteObjectsHelper.TLinhas.TABLE_NAME).append(" LIN ");
-        sb.append("WHERE LIN.").append(SQLiteObjectsHelper.TLinhas.COLUMN_EHFAVORITA).append(" = 1 ");
-        if(StringUtils.isNotBlank(nroLinha)) {
-            sb.append(" AND ").append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" = '").append(nroLinha).append("' ");
+    private static String getSelectAllFavoritos(String idFirebase) {
+        StringBuilder sb = new StringBuilder("SELECT ").append(SQLiteObjectsHelper.TLinhasFavoritas.getInstance().getColunasParaSelect()).append(" FROM ");
+        sb.append(SQLiteObjectsHelper.TLinhasFavoritas.TABLE_NAME).append(" LIN ");
+        sb.append(" INNER JOIN ").append(SQLiteObjectsHelper.TMunicipios.TABLE_NAME).append(" MUN ON MUN.").append(SQLiteObjectsHelper.TMunicipios._ID).append(" = LIN.")
+                .append(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_MUNICIPIO);
+        if(StringUtils.isNotBlank(idFirebase)) {
+            sb.append(" WHERE ").append(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_IDFIREBASE).append(" = '").append(idFirebase).append("' ");
         }
-        sb.append(" ORDER BY ").append(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO).append(" DESC");
+        sb.append(" ORDER BY MUN.").append(SQLiteObjectsHelper.TMunicipios.COLUMN_MUNNOME).append(" ASC, ").append(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_NUMERO);
         return sb.toString();
     }
 
     public static void updateFavorito(Linha linha) {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
-
+        List<Linha> lFavoritos = getFavoritos(linha.getId());
         ContentValues values = new ContentValues();
-        values.put(SQLiteObjectsHelper.TLinhas.COLUMN_EHFAVORITA, linha.ehFavorito() ? NumberUtils.INTEGER_ONE : NumberUtils.INTEGER_ZERO);
-
-        StringBuilder whereClause = new StringBuilder();
-        whereClause.append(SQLiteObjectsHelper.TLinhas._ID).append(" = ?");
         db.beginTransaction();
-        db.update(SQLiteObjectsHelper.TLinhas.TABLE_NAME, values, whereClause.toString(), new String[]{linha.getIdSql().toString()});
+        if(CollectionUtils.isEmpty(lFavoritos)) {
+            values.put(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_NUMERO, linha.getNumero());
+            values.put(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_TITULO, linha.getTitulo());
+            values.put(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_SUBTITULO, linha.getSubtitulo());
+            values.put(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_MUNICIPIO, App.getMunicipio().getIdSql());
+            values.put(SQLiteObjectsHelper.TLinhasFavoritas.COLUMN_IDFIREBASE, linha.getId());
+            linha.setIdSql(db.insert(SQLiteObjectsHelper.TLinhasFavoritas.TABLE_NAME, null, values));
+        } else {
+            StringBuilder whereClause = new StringBuilder();
+            whereClause.append(SQLiteObjectsHelper.TLinhasFavoritas._ID).append(" = ? ");
+            db.delete(SQLiteObjectsHelper.TLinhasFavoritas.TABLE_NAME, whereClause.toString(), new String[]{linha.getIdSql().toString()});
+        }
 
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -112,7 +85,6 @@ public class QueryBuilder {
         ContentValues values = new ContentValues();
         StringBuilder whereClause = new StringBuilder();
         Municipio municipioAtualOld = getMunicipioAtual();
-
 
         values.put(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL, NumberUtils.INTEGER_ONE);
         whereClause.append(SQLiteObjectsHelper.TMunicipios._ID).append(" = ?");
@@ -155,35 +127,6 @@ public class QueryBuilder {
         sb.append(SQLiteObjectsHelper.TMunicipios.TABLE_NAME).append(" MUN ");
         sb.append("WHERE MUN.").append(SQLiteObjectsHelper.TMunicipios.COLUMN_EHMUNICIPIOATUAL).append(" = 1 ");
         return sb.toString();
-    }
-
-    public static void insereLinhas(List<Linha> lLinhas) {
-        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
-        List<Linha> linhasGravadas = getLinhas(null);
-        Map<String, Linha> mLinhasAux = null;
-        if(CollectionUtils.isNotEmpty(linhasGravadas)) {
-            mLinhasAux = new HashMap<>();
-            for(Linha umaLinhaGravada : linhasGravadas) {
-                mLinhasAux.put(umaLinhaGravada.getNumero()+"|"+umaLinhaGravada.getMunicipio().getIdSql(), umaLinhaGravada);
-            }
-        }
-
-        ContentValues values = new ContentValues();
-        db.beginTransaction();
-        for (Linha umaLinha : lLinhas) {
-            if(mLinhasAux != null && mLinhasAux.get(umaLinha.getNumero()+"|"+umaLinha.getMunicipio().getIdSql()) != null) {
-                continue;
-            }
-            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_NUMERO, umaLinha.getNumero());
-            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_IDFIREBASE, umaLinha.getId());
-            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_TITULO, umaLinha.getTitulo());
-            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_SUBTITULO, umaLinha.getSubtitulo());
-            values.put(SQLiteObjectsHelper.TLinhas.COLUMN_MUNICIPIO, App.getMunicipio().getIdSql());
-            umaLinha.setIdSql(db.insert(SQLiteObjectsHelper.TLinhas.TABLE_NAME, null, values));
-        }
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
     }
 
     public static void insereMunicipios(List<Municipio> lMunicipiosAux) {

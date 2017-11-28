@@ -5,15 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
-import com.marcosevaristo.tcc001.components.BotaoFavorito;
-import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.Municipio;
 
 import java.util.ArrayList;

@@ -8,11 +8,15 @@
     <dimen name="custom_tab_layout_height">72dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin_2">90dp</dimen>
+    <dimen name="fab_margin_3">140dp</dimen>
+    <dimen name="fab_small_sides_margin">24dp</dimen>
 
     <dimen name="etBuscaWidth">270dp</dimen>
     <dimen name="listItensHeight">480dp</dimen>
     <dimen name="marginTopListItensComAppBarTabLayout">110dp</dimen>
     <dimen name="marginTopComAppBar">56dp</dimen>
+    <dimen name="defaultListItemHeight">50dp</dimen>
 
     <dimen name="menuButtonSize">30dp</dimen>
     <dimen name="textSmall">16sp</dimen>

@@ -1,26 +1,12 @@
 package com.marcosevaristo.tcc001.activities;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.widget.Button;
 
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
@@ -28,20 +14,34 @@ import com.marcosevaristo.tcc001.adapters.ViewPagerAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.fragments.AbaBuscar;
 import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
-import com.marcosevaristo.tcc001.utils.FirebaseUtils;
-
-import java.lang.reflect.Field;
 
 public class MainActivity extends AppCompatActivity {
 
-    private boolean isMenuOpen;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupMainActivity();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            for(int i = 0; i < viewPagerAdapter.getCount(); i++) {
+                if (i == 0) {
+                    ((AbaBuscar) viewPagerAdapter.getItem(i)).atualizaBusca();
+                } else if (i == 1) {
+                    ((AbaFavoritos) viewPagerAdapter.getItem(i)).atualizaFavoritos();
+                }
+            }
+        }
+    }
+
+    private void setupMainActivity() {
         App.setMunicipio(QueryBuilder.getMunicipioAtual());
         if(App.getMunicipio() == null) {
-            startActivity(new Intent(App.getAppContext(), SelecionaMunicipio.class));
+            startActivityForResult(new Intent(App.getAppContext(), SelecionaMunicipio.class), 0);
         } else {
             setupToolbar();
             setContentView(R.layout.activity_main);
@@ -70,13 +70,13 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AbaBuscar(), getString(R.string.abaBuscar));
-        adapter.addFragment(new AbaFavoritos(), getString(R.string.abaFavoritos));
-        viewPager.setAdapter(adapter);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new AbaBuscar(), getString(R.string.abaBuscar));
+        viewPagerAdapter.addFragment(new AbaFavoritos(), getString(R.string.abaFavoritos));
+        viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.addOnPageChangeListener(getOnPageChangeListener(adapter));
+        viewPager.addOnPageChangeListener(getOnPageChangeListener(viewPagerAdapter));
     }
 
     private ViewPager.OnPageChangeListener getOnPageChangeListener(final ViewPagerAdapter adapter) {

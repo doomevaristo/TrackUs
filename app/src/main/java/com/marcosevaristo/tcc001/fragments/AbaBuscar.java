@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -24,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
+import com.marcosevaristo.tcc001.activities.SelecionaMunicipio;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;
 import com.marcosevaristo.tcc001.adapters.NumericKeyBoardTransformationMethod;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
@@ -35,7 +39,7 @@ import com.marcosevaristo.tcc001.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbaBuscar extends Fragment {
+public class AbaBuscar extends Fragment implements View.OnClickListener{
 
     private View view;
     private ListView lView;
@@ -43,6 +47,10 @@ public class AbaBuscar extends Fragment {
     private List<Linha> lLinhas;
     private ProgressBar progressBar;
     private String ultimaBusca;
+
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fabMenu,fabTrocaMunicipio,fabSearch;
 
     public AbaBuscar() {}
 
@@ -68,18 +76,11 @@ public class AbaBuscar extends Fragment {
         lView.setAdapter(null);
         lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
 
-        List<Linha> lLinhasSalvas = QueryBuilder.getLinhas(argBusca);
-        if(CollectionUtils.isNotEmpty(lLinhasSalvas)) {
-            lLinhas = new ArrayList<>();
-            lLinhas.addAll(lLinhasSalvas);
-            setupListAdapter();
-        } else {
-            Query query = FirebaseUtils.getLinhasReference(null).orderByChild("numero");
-            if(!StringUtils.isNotBlank(argBusca) && !argBusca.trim().equals(StringUtils.emptyString())){
-                query = query.equalTo(argBusca);
-            }
-            query.addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
+        Query query = FirebaseUtils.getLinhasReference(null).orderByChild("numero");
+        if(!StringUtils.isNotBlank(argBusca) && !argBusca.trim().equals(StringUtils.emptyString())){
+            query = query.equalTo(argBusca);
         }
+        query.addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         ultimaBusca = argBusca;
         progressBar.setVisibility(View.GONE);
     }
@@ -92,11 +93,13 @@ public class AbaBuscar extends Fragment {
                     lLinhas = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         Linha umaLinha = umDataSnapshot.getValue(Linha.class);
-                        umaLinha.setMunicipio(App.getMunicipio());
+                        List<Linha> lLinhaSalva = QueryBuilder.getFavoritos(umaLinha.getId());
+                        if(CollectionUtils.isNotEmpty(lLinhaSalva)) {
+                            umaLinha = lLinhaSalva.get(0);
+                        } else {
+                            umaLinha.setMunicipio(App.getMunicipio());
+                        }
                         lLinhas.add(umaLinha);
-                    }
-                    if(CollectionUtils.isNotEmpty(lLinhas)) {
-                        QueryBuilder.insereLinhas(lLinhas);
                     }
                     setupListAdapter();
                 } else {
@@ -132,45 +135,83 @@ public class AbaBuscar extends Fragment {
     }
 
     private void setupFloatingActionButton(View view) {
-         view.findViewById(R.id.fab_search).setOnClickListener(getOnClickListenerFAB());
-    }
+        fabMenu = (FloatingActionButton) view.findViewById(R.id.fab_menu);
+        fabTrocaMunicipio = (FloatingActionButton) view.findViewById(R.id.fab_troca_municipio);
+        fabSearch = (FloatingActionButton) view.findViewById(R.id.fab_search);
 
-    private View.OnClickListener getOnClickListenerFAB() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
-                InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(busca.getVisibility() == View.GONE) {
-                    exibeComponenteDeBusca(busca, imm);
-                } else {
-                    String arg = busca.getText().toString();
-                    setupListLinhas(arg);
-                    escondeComponenteDeBusca(busca, imm);
-                }
-            }
+        fab_open = AnimationUtils.loadAnimation(App.getAppContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(App.getAppContext(),R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(App.getAppContext(),R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(App.getAppContext(),R.anim.rotate_backward);
 
-            private void exibeComponenteDeBusca(TextView busca, InputMethodManager imm) {
-                busca.setVisibility(View.VISIBLE);
-                busca.requestFocus();
-                busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-                busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-                busca.setTypeface(Typeface.SANS_SERIF);
-                imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
-            }
-
-            private void escondeComponenteDeBusca(TextView busca, InputMethodManager imm) {
-                busca.setText("");
-                busca.setVisibility(View.GONE);
-                imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
-            }
-        };
+        fabMenu.setOnClickListener(this);
+        fabTrocaMunicipio.setOnClickListener(this);
+        fabSearch.setOnClickListener(this);
     }
 
     public void atualizaBusca() {
         EditText editText = (EditText) view.findViewById(R.id.etBusca);
         editText.setVisibility(View.GONE);
         editText.setText(StringUtils.emptyString());
-        setupListLinhas(ultimaBusca);
+
+        if(CollectionUtils.isNotEmpty(lLinhas)) {
+            List<Linha> lFavoritos;
+            for(Linha umaLinha : lLinhas) {
+                lFavoritos = QueryBuilder.getFavoritos(umaLinha.getId());
+                umaLinha.setEhFavorito(CollectionUtils.isNotEmpty(lFavoritos));
+            }
+        }
+        setupListAdapter();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        animateFAB();
+        switch (id){
+            case R.id.fab_menu:
+                break;
+            case R.id.fab_search:
+                TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
+                InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(busca.getVisibility() == View.GONE) {
+                    busca.setVisibility(View.VISIBLE);
+                    busca.requestFocus();
+                    busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                    busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+                    busca.setTypeface(Typeface.SANS_SERIF);
+                    imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+                    String arg = busca.getText().toString();
+                    setupListLinhas(arg);
+                    busca.setText("");
+                    busca.setVisibility(View.GONE);
+                    imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
+                }
+                break;
+            case R.id.fab_troca_municipio:
+                startActivityForResult(new Intent(App.getAppContext(), SelecionaMunicipio.class),0);
+                break;
+        }
+    }
+
+    public void animateFAB(){
+        if(isFabOpen){
+            fabMenu.startAnimation(rotate_backward);
+            fabSearch.startAnimation(fab_close);
+            fabTrocaMunicipio.startAnimation(fab_close);
+
+            fabSearch.setClickable(false);
+            fabTrocaMunicipio.setClickable(false);
+            isFabOpen = false;
+        } else {
+            fabMenu.startAnimation(rotate_forward);
+            fabSearch.startAnimation(fab_open);
+            fabTrocaMunicipio.startAnimation(fab_open);
+
+            fabSearch.setClickable(false);
+            fabTrocaMunicipio.setClickable(true);
+            isFabOpen = true;
+        }
     }
 }

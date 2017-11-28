@@ -13,7 +13,6 @@ import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.components.BotaoFavorito;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
-import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
 import com.marcosevaristo.tcc001.model.Linha;
 
 import java.util.ArrayList;
@@ -80,7 +79,11 @@ public class LinhasAdapter extends ArrayAdapter<Linha> {
             if(ehBusca) {
                 linhaHolder.botaoFavorito = setupBotaoFavorito(view, position);
             } else {
-                linhaHolder.municipio.setText(linha.getMunicipio().getNome());
+                linhaHolder.municipio = (TextView) view.findViewById(R.id.linhaMunicipioText);
+                if(linhaHolder.municipio != null) {
+                    linhaHolder.municipio.setText(linha.getMunicipio().getNome());
+                }
+
                 linhaHolder.botaoExcluir = setupBotaoExcluir(view, position);
             }
         }

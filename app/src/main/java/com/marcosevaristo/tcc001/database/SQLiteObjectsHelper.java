@@ -5,20 +5,19 @@ import android.provider.BaseColumns;
 public class SQLiteObjectsHelper {
     private SQLiteObjectsHelper(){}
 
-    public static class TLinhas implements BaseColumns, OperacoesComColunas {
-        public static String TABLE_NAME = "TB_LINHAS";
+    public static class TLinhasFavoritas implements BaseColumns, OperacoesComColunas {
+        public static String TABLE_NAME = "TB_LINHAS_FAVORITAS";
         public static final String COLUMN_IDFIREBASE = "LIN_IDFIREBASE";
         public static String COLUMN_NUMERO = "LIN_NUMERO";
         public static String COLUMN_TITULO = "LIN_TITULO";
         public static String COLUMN_SUBTITULO = "LIN_SUBTITULO";
         public static String COLUMN_MUNICIPIO = "LIN_MUNID";
-        public static String COLUMN_EHFAVORITA = "LIN_EHFAVORITA";
 
-        private static TLinhas instance;
+        private static TLinhasFavoritas instance;
 
-        public static TLinhas getInstance() {
+        public static TLinhasFavoritas getInstance() {
             if(instance == null) {
-                instance = new TLinhas();
+                instance = new TLinhasFavoritas();
             }
             return instance;
         }
@@ -33,7 +32,6 @@ public class SQLiteObjectsHelper {
             sb.append(",").append(COLUMN_TITULO).append(" VARCHAR(255) NOT NULL ");
             sb.append(",").append(COLUMN_SUBTITULO).append(" VARCHAR(600) NULL ");
             sb.append(",").append(COLUMN_MUNICIPIO).append(" INTEGER NULL ");
-            sb.append(",").append(COLUMN_EHFAVORITA).append(" INTEGER NOT NULL DEFAULT 0 ");
             sb.append(", FOREIGN KEY (").append(COLUMN_MUNICIPIO).append(") REFERENCES ").append(TMunicipios.TABLE_NAME).append("(")
                     .append(TMunicipios._ID).append(") ON DELETE CASCADE");
             sb.append(");");
@@ -44,8 +42,7 @@ public class SQLiteObjectsHelper {
         public String getColunasParaSelect() {
             StringBuilder sb = new StringBuilder();
             sb.append("LIN.").append(_ID).append(", ").append(COLUMN_IDFIREBASE).append(", ").append(COLUMN_NUMERO).append(", ")
-                    .append(COLUMN_TITULO).append(", ").append(COLUMN_SUBTITULO).append(", ").append(COLUMN_MUNICIPIO)
-                    .append(", ").append(COLUMN_EHFAVORITA);
+                    .append(COLUMN_TITULO).append(", ").append(COLUMN_SUBTITULO).append(", ").append(COLUMN_MUNICIPIO);
             return sb.toString();
         }
     }

@@ -1,6 +1,5 @@
 package com.marcosevaristo.tcc001.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +22,6 @@ import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SelecionaMunicipio extends AppCompatActivity {
 
@@ -38,7 +36,6 @@ public class SelecionaMunicipio extends AppCompatActivity {
         setContentView(R.layout.activity_seleciona_municipio);
         setupToolbar();
         setupListMunicipios();
-        App.toast(R.string.hint_seleciona_municipio);
     }
 
     private void setupToolbar() {
@@ -80,11 +77,13 @@ public class SelecionaMunicipio extends AppCompatActivity {
                     Toast.makeText(App.getAppContext(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
                 progressBar.setVisibility(View.GONE);
+                App.toast(R.string.hint_seleciona_municipio);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 progressBar.setVisibility(View.GONE);
+                App.toast(R.string.hint_seleciona_municipio);
             }
         };
     }
@@ -93,7 +92,6 @@ public class SelecionaMunicipio extends AppCompatActivity {
         adapter = new MunicipiosAdapter(R.layout.municipio_item, lMunicipios);
         adapter.notifyDataSetChanged();
         lMunicipiosView.setAdapter(adapter);
-        progressBar.setVisibility(View.GONE);
     }
 
     private AdapterView.OnItemClickListener getOnItemClickListenerSelecionaMunicipio() {
@@ -105,7 +103,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
                 App.setMunicipio(municipioSelecionado);
 
                 Toast.makeText(App.getAppContext(), App.getAppContext().getString(R.string.municipio_selecionado_sucesso, municipioSelecionado.getNome()), Toast.LENGTH_LONG).show();
-                startActivity(new Intent(App.getAppContext(), MainActivity.class));
+                setResult(RESULT_OK);
                 finish();
             }
         };

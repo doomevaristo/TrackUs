@@ -33,17 +33,55 @@
          />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_search"
-        android:src="@drawable/ic_fab_search"
+        android:id="@+id/fab_troca_municipio"
+        android:src="@drawable/ic_swap_horiz_black_24dp"
+        android:backgroundTint="@color/greyButtons"
+        app:borderWidth="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/fab_small_sides_margin"
+        android:layout_marginEnd="@dimen/fab_small_sides_margin"
+        android:layout_marginBottom="@dimen/fab_margin_3"
+        android:visibility="invisible"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:layout_gravity="bottom|end"
+        app:fabSize="mini"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_search"
+        android:src="@drawable/ic_search_black_24dp"
+        android:backgroundTint="@color/greyButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/fab_small_sides_margin"
+        android:layout_marginRight="@dimen/fab_small_sides_margin"
+        android:layout_marginBottom="@dimen/fab_margin_2"
+        android:visibility="invisible"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:borderWidth="0dp"
+        app:fabSize="mini" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_menu"
+        android:src="@drawable/ic_add_black_24dp"
+        android:tint="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
         app:borderWidth="0dp"
-        app:fabSize="normal"/>
+        app:fabSize="normal" />
 
 </RelativeLayout>
