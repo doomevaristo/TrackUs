@@ -28,12 +28,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            for(int i = 0; i < viewPagerAdapter.getCount(); i++) {
-                if (i == 0) {
-                    ((AbaBuscar) viewPagerAdapter.getItem(i)).atualizaBusca();
-                } else if (i == 1) {
-                    ((AbaFavoritos) viewPagerAdapter.getItem(i)).atualizaFavoritos();
-                }
+            if(viewPagerAdapter != null) {
+                ((AbaBuscar) viewPagerAdapter.getItem(0)).atualizaBusca(true);
+            } else {
+                setupMainActivity();
             }
         }
     }
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-                    ((AbaBuscar) adapter.getItem(position)).atualizaBusca();
+                    ((AbaBuscar) adapter.getItem(position)).atualizaBusca(false);
                 } else if (position == 1) {
                     ((AbaFavoritos) adapter.getItem(position)).atualizaFavoritos();
                 }

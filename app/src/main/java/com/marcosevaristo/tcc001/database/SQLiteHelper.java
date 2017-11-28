@@ -24,7 +24,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQLiteObjectsHelper.TLinhasFavoritas.getInstance().getCreateEntry());
-        db.execSQL(SQLiteObjectsHelper.TMunicipios.getInstance().getCreateEntry());
+        db.execSQL(SQLiteObjectsHelper.TMunicipioAtual.getInstance().getCreateEntry());
     }
 
     @Override

@@ -8,9 +8,9 @@ public class FirebaseUtils {
 
     private static FirebaseDatabase database;
 
-    private static final String NODE_MUNICIPIOS = "municipios";
-    private static final String NODE_LINHAS = "linhas";
-    private static final String NODE_CARROS = "carros";
+    public static final String NODE_MUNICIPIOS = "municipios";
+    public static final String NODE_LINHAS = "linhas";
+    public static final String NODE_CARROS = "carros";
 
     public static FirebaseDatabase getDatabase() {
         if(database == null) {

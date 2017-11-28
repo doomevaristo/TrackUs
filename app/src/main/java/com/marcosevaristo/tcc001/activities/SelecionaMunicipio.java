@@ -50,14 +50,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
         lMunicipiosView.setAdapter(null);
         lMunicipiosView.setOnItemClickListener(getOnItemClickListenerSelecionaMunicipio());
 
-        List<Municipio> lMunicipiosSalvos = QueryBuilder.getMunicipios(null);
-        if(CollectionUtils.isNotEmpty(lMunicipiosSalvos)) {
-            lMunicipios = new ArrayList<>();
-            lMunicipios.addAll(lMunicipiosSalvos);
-            setupListAdapter();
-        } else {
-            FirebaseUtils.getMunicipiosReference(null).addListenerForSingleValueEvent(getEventoBuscaMunicipiosFirebase());
-        }
+        FirebaseUtils.getMunicipiosReference(null).addListenerForSingleValueEvent(getEventoBuscaMunicipiosFirebase());
     }
 
     private ValueEventListener getEventoBuscaMunicipiosFirebase() {
@@ -67,10 +60,11 @@ public class SelecionaMunicipio extends AppCompatActivity {
                 if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
                     lMunicipios = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
-                        lMunicipios.add(umDataSnapshot.getValue(Municipio.class));
-                    }
-                    if(CollectionUtils.isNotEmpty(lMunicipios)) {
-                        QueryBuilder.insereMunicipios(lMunicipios);
+                        Municipio municipio = umDataSnapshot.getValue(Municipio.class);
+                        if(municipio != null && App.getMunicipio() != null && municipio.getId().equals(App.getMunicipio().getId())) {
+                            municipio.setEhMunicipioAtual(true);
+                        }
+                        lMunicipios.add(municipio);
                     }
                     setupListAdapter();
                 } else {

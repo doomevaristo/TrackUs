@@ -93,9 +93,9 @@ public class AbaBuscar extends Fragment implements View.OnClickListener{
                     lLinhas = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         Linha umaLinha = umDataSnapshot.getValue(Linha.class);
-                        List<Linha> lLinhaSalva = QueryBuilder.getFavoritos(umaLinha.getId());
-                        if(CollectionUtils.isNotEmpty(lLinhaSalva)) {
-                            umaLinha = lLinhaSalva.get(0);
+                        List<Linha> lLinhasFavoritas = QueryBuilder.getFavoritos(umaLinha.getId());
+                        if(CollectionUtils.isNotEmpty(lLinhasFavoritas)) {
+                            umaLinha = lLinhasFavoritas.get(0);
                         } else {
                             umaLinha.setMunicipio(App.getMunicipio());
                         }
@@ -149,16 +149,22 @@ public class AbaBuscar extends Fragment implements View.OnClickListener{
         fabSearch.setOnClickListener(this);
     }
 
-    public void atualizaBusca() {
+    public void atualizaBusca(boolean executaBusca) {
         EditText editText = (EditText) view.findViewById(R.id.etBusca);
         editText.setVisibility(View.GONE);
         editText.setText(StringUtils.emptyString());
 
-        if(CollectionUtils.isNotEmpty(lLinhas)) {
-            List<Linha> lFavoritos;
-            for(Linha umaLinha : lLinhas) {
-                lFavoritos = QueryBuilder.getFavoritos(umaLinha.getId());
-                umaLinha.setEhFavorito(CollectionUtils.isNotEmpty(lFavoritos));
+        if(executaBusca) {
+            lLinhas = new ArrayList<>();
+            lView = null;
+            setupListLinhas(ultimaBusca);
+        } else {
+            if(CollectionUtils.isNotEmpty(lLinhas)) {
+                List<Linha> lFavoritos;
+                for(Linha umaLinha : lLinhas) {
+                    lFavoritos = QueryBuilder.getFavoritos(umaLinha.getId());
+                    umaLinha.setEhFavorito(CollectionUtils.isNotEmpty(lFavoritos));
+                }
             }
         }
         setupListAdapter();

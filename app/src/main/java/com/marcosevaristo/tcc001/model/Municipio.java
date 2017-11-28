@@ -15,8 +15,9 @@ public class Municipio implements Serializable {
 
     public Municipio(){}
 
-    public Municipio(Long idSql) {
-        this.idSql = idSql;
+    public Municipio(String id, String nome) {
+        this.id = id;
+        this.nome = nome;
     }
 
     public Long getIdSql() {
@@ -50,14 +51,6 @@ public class Municipio implements Serializable {
         this.ehMunicipioAtual = ehMunicipioAtual;
     }
 
-    public boolean isSelecionado() {
-        return selecionado;
-    }
-
-    public void setSelecionado(boolean selecionado) {
-        this.selecionado = selecionado;
-    }
-
     public String getId() {
         return id;
     }
@@ -68,8 +61,6 @@ public class Municipio implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.idSql).append(" - ").append(this.nome);
-        return sb.toString();
+        return this.nome;
     }
 }

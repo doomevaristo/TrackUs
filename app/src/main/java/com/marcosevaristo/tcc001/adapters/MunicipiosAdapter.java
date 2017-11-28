@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.model.Municipio;
+import com.marcosevaristo.tcc001.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class MunicipiosAdapter extends ArrayAdapter<Municipio> {
         Municipio municipio = lMunicipios.get(position);
         if(municipio != null) {
             municipioHolder.texto.setText(municipio.getNome());
-            if(municipio.isEhMunicipioAtual()) municipioHolder.textoMunAtual.setText(App.getAppContext().getString(R.string.municipioAtualDet));
+            municipioHolder.textoMunAtual.setText(municipio.isEhMunicipioAtual() ? App.getAppContext().getString(R.string.municipioAtualDet) : StringUtils.emptyString());
         }
         return view;
     }
