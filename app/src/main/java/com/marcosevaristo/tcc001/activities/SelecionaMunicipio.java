@@ -17,7 +17,6 @@ import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.adapters.MunicipiosAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.model.Municipio;
-import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 
 import java.util.ArrayList;

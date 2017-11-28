@@ -4,14 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.UserManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -39,7 +42,7 @@ import com.marcosevaristo.tcc001.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbaBuscar extends Fragment implements View.OnClickListener{
+public class AbaBuscar extends Fragment implements View.OnClickListener, EditText.OnEditorActionListener {
 
     private View view;
     private ListView lView;
@@ -77,7 +80,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener{
         lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
 
         Query query = FirebaseUtils.getLinhasReference(null).orderByChild("numero");
-        if(!StringUtils.isNotBlank(argBusca) && !argBusca.trim().equals(StringUtils.emptyString())){
+        if(StringUtils.isNotBlank(argBusca)){
             query = query.equalTo(argBusca);
         }
         query.addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
@@ -182,6 +185,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener{
                 InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(busca.getVisibility() == View.GONE) {
                     busca.setVisibility(View.VISIBLE);
+                    busca.setOnEditorActionListener(this);
                     busca.requestFocus();
                     busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
                     busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
@@ -190,7 +194,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener{
                 } else {
                     String arg = busca.getText().toString();
                     setupListLinhas(arg);
-                    busca.setText("");
+                    busca.setText(StringUtils.emptyString());
                     busca.setVisibility(View.GONE);
                     imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
                 }
@@ -215,9 +219,20 @@ public class AbaBuscar extends Fragment implements View.OnClickListener{
             fabSearch.startAnimation(fab_open);
             fabTrocaMunicipio.startAnimation(fab_open);
 
-            fabSearch.setClickable(false);
+            fabSearch.setClickable(true);
             fabTrocaMunicipio.setClickable(true);
             isFabOpen = true;
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH
+                || actionId == EditorInfo.IME_ACTION_NEXT) {
+            setupListLinhas(v.getText().toString());
+            return true;
+        }
+        // Return true if you have consumed the action, else false.
+        return false;
     }
 }

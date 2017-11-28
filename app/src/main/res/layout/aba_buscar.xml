@@ -20,17 +20,18 @@
 
     <EditText
         android:id="@+id/etBusca"
-        android:layout_width="@dimen/etBuscaWidth"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/fab_menu"
+        android:layout_toStartOf="@id/fab_menu"
         android:visibility="gone"
         android:focusable="true"
         android:maxLength="30"
         android:inputType="number"
-        android:hint="@string/hintBuscar"
-         />
+        android:hint="@string/hintBuscar"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_troca_municipio"
