@@ -48,9 +48,7 @@ import com.marcosevaristo.tcc001.utils.GoogleMapsUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -130,7 +128,15 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                     if(umDataSnapshot.getKey().equals("carros")) {
-                        linha.setCarros((Map<String, Carro>) umDataSnapshot.getValue());
+                        List<Carro> lCarros = new ArrayList<>();
+                        for(DataSnapshot carroDataSnapshot : umDataSnapshot.getChildren()) {
+                            String id = carroDataSnapshot.getKey();
+                            String latitude = carroDataSnapshot.child("latitude").getValue().toString();
+                            String longitude = carroDataSnapshot.child("longitude").getValue().toString();
+                            String location = carroDataSnapshot.child("location").getValue().toString();
+                            lCarros.add(new Carro(id, latitude, longitude, location));
+                        }
+                        linha.setCarros(lCarros);
                     }
                     if(umDataSnapshot.getKey().equals("rota")) {
                         linha.setRota((List<String>) umDataSnapshot.getValue());
@@ -144,7 +150,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 if(CollectionUtils.isNotEmpty(lMarker)) {
                     removeMarkers();
                 }
-                populaMarkersDoMapaComCarros(new ArrayList<>(linha.getCarros().values()));
+                populaMarkersDoMapaComCarros(linha.getCarros());
             }
 
             @Override

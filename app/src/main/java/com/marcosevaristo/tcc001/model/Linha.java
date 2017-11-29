@@ -2,7 +2,6 @@ package com.marcosevaristo.tcc001.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 public class Linha implements Serializable {
     private Long idSql;
@@ -11,7 +10,7 @@ public class Linha implements Serializable {
     private String numero;
     private String titulo;
     private String subtitulo;
-    private Map<String, Carro> carros;
+    private List<Carro> carros;
     private List<String> rota;
 
     private boolean ehFavorito = false;
@@ -60,11 +59,11 @@ public class Linha implements Serializable {
         this.subtitulo = subtitulo;
     }
 
-    public Map<String, Carro> getCarros() {
+    public List<Carro> getCarros() {
         return carros;
     }
 
-    public void setCarros(Map<String, Carro> carros) {
+    public void setCarros(List<Carro> carros) {
         this.carros = carros;
     }
 
