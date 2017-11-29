@@ -45,6 +45,7 @@ import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 import com.marcosevaristo.tcc001.utils.GoogleMapsUtils;
+import com.marcosevaristo.tcc001.utils.NumberUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         }
 
         setaObjetosIniciaisNoMapa();
-        setupLocationsOnMap();
+        moveCameraParaMunicipio();
     }
 
     private void setupToolbar() {
@@ -103,7 +104,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    private void setupLocationsOnMap() {
+    private void moveCameraParaMunicipio() {
         try {
             Geocoder gc = new Geocoder(this);
             List<Address> addresses = gc.getFromLocationName(linha.getMunicipio().getNome(), 1);
@@ -126,36 +127,38 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
-                    if(umDataSnapshot.getKey().equals("carros")) {
-                        List<Carro> lCarros = new ArrayList<>();
-                        for(DataSnapshot carroDataSnapshot : umDataSnapshot.getChildren()) {
-                            String id = carroDataSnapshot.getKey();
-                            String latitude = carroDataSnapshot.child("latitude").getValue().toString();
-                            String longitude = carroDataSnapshot.child("longitude").getValue().toString();
-                            String location = carroDataSnapshot.child("location").getValue().toString();
-                            lCarros.add(new Carro(id, latitude, longitude, location));
+                if(dataSnapshot.exists()) {
+                    for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
+                        if(umDataSnapshot.getKey().equals("carros")) {
+                            List<Carro> lCarros = new ArrayList<>();
+                            for(DataSnapshot carroDataSnapshot : umDataSnapshot.getChildren()) {
+                                String id = carroDataSnapshot.getKey();
+                                String latitude = carroDataSnapshot.child("latitude").getValue().toString();
+                                String longitude = carroDataSnapshot.child("longitude").getValue().toString();
+                                String location = carroDataSnapshot.child("location").getValue().toString();
+                                lCarros.add(new Carro(id, latitude, longitude, location));
+                            }
+                            linha.setCarros(lCarros);
                         }
-                        linha.setCarros(lCarros);
+                        if(umDataSnapshot.getKey().equals("rota")) {
+                            linha.setRota((List<String>) umDataSnapshot.getValue());
+                        }
                     }
-                    if(umDataSnapshot.getKey().equals("rota")) {
-                        linha.setRota((List<String>) umDataSnapshot.getValue());
+
+                    if(CollectionUtils.isNotEmpty(linha.getRota())) {
+                        gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
                     }
-                }
 
-                if(CollectionUtils.isNotEmpty(linha.getRota())) {
-                    gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
+                    if(CollectionUtils.isNotEmpty(lMarker)) {
+                        removeMarkers();
+                    }
+                    populaMarkersDoMapaComCarros(linha.getCarros());
                 }
-
-                if(CollectionUtils.isNotEmpty(lMarker)) {
-                    removeMarkers();
-                }
-                populaMarkersDoMapaComCarros(linha.getCarros());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                throw databaseError.toException();
             }
         };
     }
@@ -170,10 +173,10 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         lMarker = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(lCarros)) {
             for(Carro umCarro : lCarros) {
-                Double latitude = Double.parseDouble(umCarro.getLatitude());
-                Double longitude = Double.parseDouble(umCarro.getLongitude());
-                LatLng posicaoUmCarro = new LatLng(latitude, longitude);
-                MarkerOptions umMarker = new MarkerOptions().position(posicaoUmCarro).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
+                LatLng posicaoUmCarro = new LatLng(Double.parseDouble(umCarro.getLatitude()), Double.parseDouble(umCarro.getLongitude()));
+                MarkerOptions umMarker = new MarkerOptions()
+                        .position(posicaoUmCarro)
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
                 lMarker.add(gMap.addMarker(umMarker));
             }
 
@@ -241,7 +244,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 Location.distanceBetween(umMarker.getPosition().latitude, umMarker.getPosition().longitude, latitudeAtual, longitudeAtual, distanciaArr);
                 Float distancia = distanciaArr[0];
 
-                umMarker.setTitle(String.valueOf(distancia));
+                umMarker.setTitle(NumberUtils.formataDistancia(distancia));
             }
         }
     }

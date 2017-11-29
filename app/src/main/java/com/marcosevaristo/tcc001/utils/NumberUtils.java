@@ -116,4 +116,23 @@ public class NumberUtils {
             return defaultValue;
         }
     }
+
+    public static String formataDistancia(Float meters) {
+        if (meters < 1000) {
+            return (meters.intValue()) + "m";
+        } else if (meters < 10000) {
+            return formatDec(meters / 1000f, 1) + "km";
+        } else {
+            return ((meters.intValue() / 1000f)) + "km";
+        }
+    }
+
+    private static String formatDec(float val, int dec) {
+        int factor = (int) Math.pow(10, dec);
+
+        int front = (int) (val);
+        int back = (int) Math.abs(val * (factor)) % factor;
+
+        return front + "." + back;
+    }
 }

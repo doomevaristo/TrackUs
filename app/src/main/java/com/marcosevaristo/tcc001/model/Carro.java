@@ -15,10 +15,10 @@ public class Carro implements Serializable{
 
     public Carro() {}
 
-    public Carro(String id, String longitude, String latitude, String location) {
+    public Carro(String id, String latitude, String longitude, String location) {
         this.id = id;
-        this.longitude = longitude;
         this.latitude = latitude;
+        this.longitude = longitude;
         this.location = location;
     }
 
