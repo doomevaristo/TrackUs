@@ -48,17 +48,16 @@ import com.marcosevaristo.tcc001.utils.GoogleMapsUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
 
-    private Toolbar toolbar;
     private GoogleMap gMap;
     private List<Marker> lMarker;
     private Linha linha;
     private boolean permitiuLocalizacao;
-
-    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,28 +86,22 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
             e.printStackTrace();
         }
 
-        setaCarrosNoMapa();
+        setaObjetosIniciaisNoMapa();
         setupLocationsOnMap();
     }
 
     private void setupToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar_map);
-        toolbar.setTitle("");
+        ((Toolbar) findViewById(R.id.toolbar_map)).setTitle("");
         TextView textViewLinhaTitulo = (TextView) findViewById(R.id.linhaMapaText);
         TextView textViewLinhaSubTitulo = (TextView) findViewById(R.id.linhaMapaSubText);
 
-        textViewLinhaTitulo.setText(linha.getNumero()+" - "+linha.getTitulo());
+        textViewLinhaTitulo.setText(linha.toStringSemSubtitulo());
         textViewLinhaSubTitulo.setText(linha.getSubtitulo());
     }
 
-    private void setaCarrosNoMapa() {
+    private void setaObjetosIniciaisNoMapa() {
         if (linha != null) {
-            FirebaseUtils.getCarrosReference(linha.getId(), null).addValueEventListener(getEventoFirebaseGetCarros());
-            if (CollectionUtils.isEmpty(linha.getRota())) {
-                FirebaseUtils.getLinhasReference(linha.getId()).child("rota").addListenerForSingleValueEvent(getEventoFirebaseGetRota());
-            } else {
-                gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
-            }
+            FirebaseUtils.getLinhasReference(App.getMunicipio().getId(), linha.getId()).addValueEventListener(getEventoFirebaseGetLinha());
         }
     }
 
@@ -130,16 +123,28 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    private ValueEventListener getEventoFirebaseGetRota() {
+    @SuppressWarnings("unchecked")
+    private ValueEventListener getEventoFirebaseGetLinha() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
-                    linha.setRota((List<String>) dataSnapshot.getValue());
+                for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
+                    if(umDataSnapshot.getKey().equals("carros")) {
+                        linha.setCarros((Map<String, Carro>) umDataSnapshot.getValue());
+                    }
+                    if(umDataSnapshot.getKey().equals("rota")) {
+                        linha.setRota((List<String>) umDataSnapshot.getValue());
+                    }
                 }
+
                 if(CollectionUtils.isNotEmpty(linha.getRota())) {
                     gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
                 }
+
+                if(CollectionUtils.isNotEmpty(lMarker)) {
+                    removeMarkers();
+                }
+                populaMarkersDoMapaComCarros(new ArrayList<>(linha.getCarros().values()));
             }
 
             @Override
@@ -155,30 +160,6 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    private ValueEventListener getEventoFirebaseGetCarros() {
-        return new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
-                    if(CollectionUtils.isNotEmpty(lMarker)) {
-                        removeMarkers();
-                    }
-                    List<Carro> lCarros = new ArrayList<>();
-                    for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
-                        lCarros.add(umDataSnapshot.getValue(Carro.class));
-                    }
-
-                    populaMarkersDoMapaComCarros(lCarros);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-    }
-
     private void populaMarkersDoMapaComCarros(List<Carro> lCarros) {
         lMarker = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(lCarros)) {
@@ -192,7 +173,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
 
             if(permitiuLocalizacao) {
                 try {
-                    mFusedLocationClient = new FusedLocationProviderClient(Mapa.this);
+                    FusedLocationProviderClient mFusedLocationClient = new FusedLocationProviderClient(Mapa.this);
                     mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
@@ -292,9 +273,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 } else {
                     verificaPermissoes();
                 }
-                return;
             }
-
         }
     }
 }

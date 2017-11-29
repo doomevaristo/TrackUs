@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if(viewPagerAdapter != null) {
+                setupToolbar();
                 ((AbaBuscar) viewPagerAdapter.getItem(0)).atualizaBusca(true);
             } else {
                 setupMainActivity();
@@ -41,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         if(App.getMunicipio() == null) {
             startActivityForResult(new Intent(App.getAppContext(), SelecionaMunicipio.class), 0);
         } else {
-            setupToolbar();
             setContentView(R.layout.activity_main);
+            setupToolbar();
             setupTabLayout();
         }
     }
@@ -58,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView textViewMunicipioAtualNome = (TextView) findViewById(R.id.toolbarMunicipioAtualNome);
+        textViewMunicipioAtualNome.setText(App.getMunicipio().getNome());
+        setSupportActionBar(toolbar);
     }
 
     private void setupTabLayout() {

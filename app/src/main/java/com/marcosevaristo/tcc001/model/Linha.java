@@ -21,6 +21,13 @@ public class Linha implements Serializable {
     public Linha() {
     }
 
+    public Linha(String id, String numero, String titulo, String subtitulo) {
+        this.id = id;
+        this.numero = numero;
+        this.titulo = titulo;
+        this.subtitulo = subtitulo;
+    }
+
     public Long getIdSql() {
         return idSql;
     }
@@ -63,14 +70,19 @@ public class Linha implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.numero);
-        sb.append(" - ");
-        sb.append(this.titulo);
+        StringBuilder sb = new StringBuilder(toStringSemSubtitulo());
         if(this.subtitulo != null) {
             sb.append(" - ");
             sb.append(this.subtitulo);
         }
+        return sb.toString();
+    }
+
+    public String toStringSemSubtitulo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.numero);
+        sb.append(" - ");
+        sb.append(this.titulo);
         return sb.toString();
     }
 

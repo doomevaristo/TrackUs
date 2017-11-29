@@ -35,4 +35,5 @@
     <string name="ok">Ok</string>
     <string name="hint_seleciona_municipio">Selecione um município</string>
     <string name="menu_alterar_municipio">Alterar município</string>
+    <string name="carregando">Carregando…</string>
 </resources>

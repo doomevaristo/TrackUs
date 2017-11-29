@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -25,9 +24,7 @@ import java.util.List;
 public class SelecionaMunicipio extends AppCompatActivity {
 
     private ListView lMunicipiosView;
-    private ProgressBar progressBar;
     private List<Municipio> lMunicipios;
-    private MunicipiosAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +39,13 @@ public class SelecionaMunicipio extends AppCompatActivity {
     }
 
     private void setupListMunicipios() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
+        App.showLoadingDialog(this);
 
         lMunicipiosView = (ListView) findViewById(R.id.listaMunicipios);
         lMunicipiosView.setAdapter(null);
         lMunicipiosView.setOnItemClickListener(getOnItemClickListenerSelecionaMunicipio());
 
-        FirebaseUtils.getMunicipiosReference(null).addListenerForSingleValueEvent(getEventoBuscaMunicipiosFirebase());
+        FirebaseUtils.getMunicipiosReference(null).addValueEventListener(getEventoBuscaMunicipiosFirebase());
     }
 
     private ValueEventListener getEventoBuscaMunicipiosFirebase() {
@@ -59,8 +55,11 @@ public class SelecionaMunicipio extends AppCompatActivity {
                 if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
                     lMunicipios = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
-                        Municipio municipio = umDataSnapshot.getValue(Municipio.class);
-                        if(municipio != null && App.getMunicipio() != null && municipio.getId().equals(App.getMunicipio().getId())) {
+                        String id = umDataSnapshot.getKey();
+                        String nome = umDataSnapshot.child("nome").getValue().toString();
+
+                        Municipio municipio = new Municipio(id, nome);
+                        if(App.getMunicipio() != null && municipio.getId().equals(App.getMunicipio().getId())) {
                             municipio.setEhMunicipioAtual(true);
                         }
                         lMunicipios.add(municipio);
@@ -69,20 +68,20 @@ public class SelecionaMunicipio extends AppCompatActivity {
                 } else {
                     Toast.makeText(App.getAppContext(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
-                progressBar.setVisibility(View.GONE);
+                App.hideLoadingDialog();
                 App.toast(R.string.hint_seleciona_municipio);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                progressBar.setVisibility(View.GONE);
+                App.hideLoadingDialog();
                 App.toast(R.string.hint_seleciona_municipio);
             }
         };
     }
 
     private void setupListAdapter() {
-        adapter = new MunicipiosAdapter(R.layout.municipio_item, lMunicipios);
+        MunicipiosAdapter adapter = new MunicipiosAdapter(R.layout.municipio_item, lMunicipios);
         adapter.notifyDataSetChanged();
         lMunicipiosView.setAdapter(adapter);
     }

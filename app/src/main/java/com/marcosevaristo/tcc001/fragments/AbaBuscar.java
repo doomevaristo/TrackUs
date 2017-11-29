@@ -1,5 +1,6 @@
 package com.marcosevaristo.tcc001.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -46,9 +47,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
 
     private View view;
     private ListView lView;
-    private LinhasAdapter adapter;
     private List<Linha> lLinhas;
-    private ProgressBar progressBar;
     private String ultimaBusca;
 
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
@@ -73,19 +72,19 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
     }
 
     private void setupListLinhas(String argBusca) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
+        App.showLoadingDialog(getActivity());
+
         lView = (ListView) view.findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
         lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
 
-        Query query = FirebaseUtils.getLinhasReference(null).orderByChild("numero");
+        Query query = FirebaseUtils.getLinhasReference(App.getMunicipio().getId(), null).orderByChild("numero");
         if(StringUtils.isNotBlank(argBusca)){
             query = query.equalTo(argBusca);
         }
         query.addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         ultimaBusca = argBusca;
-        progressBar.setVisibility(View.GONE);
+        App.hideLoadingDialog();
     }
 
     private ValueEventListener getEventoBuscaLinhasFirebase() {
@@ -95,31 +94,32 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
                 if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
                     lLinhas = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
-                        Linha umaLinha = umDataSnapshot.getValue(Linha.class);
-                        List<Linha> lLinhasFavoritas = QueryBuilder.getFavoritos(umaLinha.getId());
-                        if(CollectionUtils.isNotEmpty(lLinhasFavoritas)) {
-                            umaLinha = lLinhasFavoritas.get(0);
-                        } else {
-                            umaLinha.setMunicipio(App.getMunicipio());
-                        }
+                        String id = umDataSnapshot.getKey();
+                        String numero = umDataSnapshot.child("numero").getValue().toString();
+                        String titulo = umDataSnapshot.child("titulo").getValue().toString();
+                        String subtitulo = umDataSnapshot.child("subtitulo").getValue().toString();
+
+                        Linha umaLinha = new Linha(id, numero, titulo, subtitulo);
+                        umaLinha.setEhFavorito(CollectionUtils.isNotEmpty(QueryBuilder.getFavoritos(umaLinha.getId())));
+                        umaLinha.setMunicipio(App.getMunicipio());
                         lLinhas.add(umaLinha);
                     }
                     setupListAdapter();
                 } else {
                     Toast.makeText(App.getAppContext(), R.string.nenhum_resultado, Toast.LENGTH_LONG).show();
                 }
-                progressBar.setVisibility(View.GONE);
+                App.hideLoadingDialog();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                progressBar.setVisibility(View.GONE);
+                App.hideLoadingDialog();
             }
         };
     }
 
     private void setupListAdapter() {
-        adapter = new LinhasAdapter(R.layout.item_da_busca, lLinhas);
+        LinhasAdapter adapter = new LinhasAdapter(R.layout.item_da_busca, lLinhas);
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
     }
@@ -232,7 +232,6 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
             setupListLinhas(v.getText().toString());
             return true;
         }
-        // Return true if you have consumed the action, else false.
         return false;
     }
 }

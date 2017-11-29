@@ -27,18 +27,18 @@ public class FirebaseUtils {
         return databaseReferenceMunicipios;
     }
 
-    public static DatabaseReference getLinhasReference(String linhaID) {
-        DatabaseReference databaseReferenceLinhas = getMunicipiosReference(App.getMunicipio().getId()).child(NODE_LINHAS);
+    public static DatabaseReference getLinhasReference(String municipioID, String linhaID) {
+        DatabaseReference databaseReferenceLinhas = getMunicipiosReference(municipioID).child(NODE_LINHAS);
         if(StringUtils.isNotBlank(linhaID)) {
             databaseReferenceLinhas = databaseReferenceLinhas.child(linhaID);
         }
         return databaseReferenceLinhas;
     }
 
-    public static DatabaseReference getCarrosReference(String linhaID, String carroID) {
+    public static DatabaseReference getCarrosReference(String municipioID, String linhaID, String carroID) {
         DatabaseReference databaseReferenceCarros = null;
         if(StringUtils.isNotBlank(linhaID)) {
-            databaseReferenceCarros = getLinhasReference(linhaID).child(NODE_CARROS);
+            databaseReferenceCarros = getLinhasReference(municipioID, linhaID).child(NODE_CARROS);
             if(StringUtils.isNotBlank(carroID)) {
                 databaseReferenceCarros = databaseReferenceCarros.child(carroID);
             }

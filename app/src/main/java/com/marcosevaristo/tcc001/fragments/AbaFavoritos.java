@@ -23,7 +23,6 @@ import java.util.List;
 public class AbaFavoritos extends Fragment{
     private View view;
     private ListView lView;
-    private LinhasAdapter adapter;
     private List<Linha> lLinhas;
 
     public AbaFavoritos() {}
@@ -50,7 +49,7 @@ public class AbaFavoritos extends Fragment{
     }
 
     private void setupListAdapter() {
-        adapter = new LinhasAdapter(R.layout.item_dos_favoritos, lLinhas);
+        LinhasAdapter adapter = new LinhasAdapter(R.layout.item_dos_favoritos, lLinhas);
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
     }
