@@ -14,7 +14,7 @@
 
     <dimen name="etBuscaWidth">270dp</dimen>
     <dimen name="listItensHeight">480dp</dimen>
-    <dimen name="marginTopListItensComAppBarTabLayout">110dp</dimen>
+    <dimen name="marginTopListItensComAppBarTabLayout">105dp</dimen>
     <dimen name="marginTopComAppBar">56dp</dimen>
     <dimen name="defaultListItemHeight">50dp</dimen>
     <dimen name="itemTextsDefaultPaddingLeft">5dp</dimen>
