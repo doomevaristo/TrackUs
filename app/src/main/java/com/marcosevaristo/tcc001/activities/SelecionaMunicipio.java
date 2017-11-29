@@ -52,7 +52,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
+                if(dataSnapshot.exists()) {
                     lMunicipios = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         String id = umDataSnapshot.getKey();

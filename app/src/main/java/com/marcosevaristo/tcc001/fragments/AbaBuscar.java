@@ -91,7 +91,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot != null && dataSnapshot.getChildren().iterator().hasNext()) {
+                if(dataSnapshot.exists()) {
                     lLinhas = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         String id = umDataSnapshot.getKey();
@@ -183,21 +183,13 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
             case R.id.fab_search:
                 TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
                 InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(busca.getVisibility() == View.GONE) {
-                    busca.setVisibility(View.VISIBLE);
-                    busca.setOnEditorActionListener(this);
-                    busca.requestFocus();
-                    busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-                    busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
-                    busca.setTypeface(Typeface.SANS_SERIF);
-                    imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
-                } else {
-                    String arg = busca.getText().toString();
-                    setupListLinhas(arg);
-                    busca.setText(StringUtils.emptyString());
-                    busca.setVisibility(View.GONE);
-                    imm.hideSoftInputFromWindow(busca.getWindowToken(), 0);
-                }
+                busca.setVisibility(View.VISIBLE);
+                busca.setOnEditorActionListener(this);
+                busca.requestFocus();
+                busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                busca.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+                busca.setTypeface(Typeface.SANS_SERIF);
+                imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
                 break;
             case R.id.fab_troca_municipio:
                 startActivityForResult(new Intent(App.getAppContext(), SelecionaMunicipio.class),0);
@@ -228,7 +220,8 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH
-                || actionId == EditorInfo.IME_ACTION_NEXT) {
+                || actionId == EditorInfo.IME_ACTION_NEXT
+                || actionId == EditorInfo.IME_ACTION_DONE) {
             setupListLinhas(v.getText().toString());
             return true;
         }

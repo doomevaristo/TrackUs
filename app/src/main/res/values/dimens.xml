@@ -17,8 +17,11 @@
     <dimen name="marginTopListItensComAppBarTabLayout">110dp</dimen>
     <dimen name="marginTopComAppBar">56dp</dimen>
     <dimen name="defaultListItemHeight">50dp</dimen>
+    <dimen name="itemTextsDefaultPaddingLeft">5dp</dimen>
+    <dimen name="itemTextsDefaultPaddingTopBottom">3dp</dimen>
 
     <dimen name="menuButtonSize">30dp</dimen>
+    <dimen name="textDefaultSize">22sp</dimen>
     <dimen name="textSmall">16sp</dimen>
     <dimen name="fieldDefaultPadding">10dp</dimen>
 </resources>

@@ -48,7 +48,7 @@ public class App extends Application {
 
     public static void hideLoadingDialog() {
         if(progressDialog != null) {
-            progressDialog.hide();
+            progressDialog.dismiss();
         }
     }
 }
