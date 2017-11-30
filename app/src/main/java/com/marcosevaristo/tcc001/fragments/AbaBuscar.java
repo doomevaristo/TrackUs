@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -84,7 +86,6 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         }
         query.addListenerForSingleValueEvent(getEventoBuscaLinhasFirebase());
         ultimaBusca = argBusca;
-        App.hideLoadingDialog();
     }
 
     private ValueEventListener getEventoBuscaLinhasFirebase() {
@@ -181,9 +182,9 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
             case R.id.fab_menu:
                 break;
             case R.id.fab_search:
-                TextView busca = (TextView) getActivity().findViewById(R.id.etBusca);
+                TextInputEditText busca = (TextInputEditText) getActivity().findViewById(R.id.etBusca);
                 InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                busca.setVisibility(View.VISIBLE);
+                ((TextInputLayout)busca.getParent().getParent()).setVisibility(View.VISIBLE);
                 busca.setOnEditorActionListener(this);
                 busca.requestFocus();
                 busca.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);

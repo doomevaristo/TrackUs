@@ -4,7 +4,7 @@
     <string name="abaBuscar">Buscar</string>
     <string name="abaFavoritos">Favoritos</string>
 
-    <string name="hintBuscar">Número da linha</string>
+    <string name="etBusca">Número da linha</string>
     <string name="title_activity_main_menu">MainMenu</string>
 
     <string name="drawer_open">Open navigation drawer</string>

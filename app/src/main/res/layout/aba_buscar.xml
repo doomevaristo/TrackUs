@@ -13,20 +13,24 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/listItensHeight" />
 
-    <EditText
-        android:id="@+id/etBusca"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/fab_menu"
-        android:layout_toStartOf="@id/fab_menu"
-        android:visibility="gone"
-        android:focusable="true"
-        android:maxLength="30"
-        android:inputType="number"
-        android:hint="@string/hintBuscar"/>
+        android:id="@+id/textLayoutBuscaLinhas"
+        android:paddingLeft="@dimen/buscaEtDefaultPadding"
+        android:paddingStart="@dimen/buscaEtDefaultPadding"
+        android:layout_marginRight="@dimen/etBuscaRightMargin"
+        android:layout_marginEnd="@dimen/etBuscaRightMargin"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/etBusca"
+            android:id="@+id/etBusca"/>
+
+    </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_troca_municipio"
