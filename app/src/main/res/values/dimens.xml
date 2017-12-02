@@ -8,9 +8,13 @@
     <dimen name="custom_tab_layout_height">72dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="fab_margin_2">90dp</dimen>
-    <dimen name="fab_margin_3">140dp</dimen>
     <dimen name="fab_small_sides_margin">24dp</dimen>
+    <dimen name="fab_label_sides_margin">70dp</dimen>
+    <dimen name="fab_elevation">3dp</dimen>
+    <dimen name="fab_layout_height">50dp</dimen>
+    <dimen name="fab_menu_layout_height">58dp</dimen>
+    <dimen name="fab_layout_first_margin_bottom">5dp</dimen>
+    <dimen name="fabLabelDefaultPadding">5dp</dimen>
 
     <dimen name="etBuscaWidth">270dp</dimen>
     <dimen name="listItensHeight">480dp</dimen>

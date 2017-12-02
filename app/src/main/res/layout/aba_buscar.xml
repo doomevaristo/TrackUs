@@ -32,56 +32,103 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_troca_municipio"
-        android:src="@drawable/ic_swap_horiz_black_24dp"
-        android:backgroundTint="@color/greyButtons"
-        app:borderWidth="0dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/fab_small_sides_margin"
-        android:layout_marginEnd="@dimen/fab_small_sides_margin"
-        android:layout_marginBottom="@dimen/fab_margin_3"
-        android:visibility="invisible"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
-        android:layout_gravity="bottom|end"
-        app:fabSize="mini"/>
+    <RelativeLayout
+        android:id="@+id/fab_troca_municipio_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fab_layout_height"
+        android:layout_above="@id/fab_search_linhas_layout">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_search"
-        android:src="@drawable/ic_search_black_24dp"
-        android:backgroundTint="@color/greyButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/fab_small_sides_margin"
-        android:layout_marginRight="@dimen/fab_small_sides_margin"
-        android:layout_marginBottom="@dimen/fab_margin_2"
-        android:visibility="invisible"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
-        app:borderWidth="0dp"
-        app:fabSize="mini" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/labelFabTrocaMunicipio"
+            android:text="@string/textLabelFabTrocaMunicipio"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/fab_label_sides_margin"
+            android:layout_marginEnd="@dimen/fab_label_sides_margin"
+            android:padding="@dimen/fabLabelDefaultPadding"
+            android:background="@drawable/rectangle"
+            android:visibility="invisible"
+            android:textSize="@dimen/textSmall"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_menu"
-        android:src="@drawable/ic_add_black_24dp"
-        android:tint="@color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_troca_municipio"
+            android:src="@drawable/ic_swap_horiz_black_24dp"
+            android:backgroundTint="@color/greyButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/fab_small_sides_margin"
+            android:layout_marginEnd="@dimen/fab_small_sides_margin"
+            android:visibility="invisible"
+            app:elevation="@dimen/fab_elevation"
+            app:pressedTranslationZ="12dp"
+            app:borderWidth="0dp"
+            app:fabSize="mini"/>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/fab_search_linhas_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fab_layout_height"
+        android:layout_marginBottom="@dimen/fab_layout_first_margin_bottom"
+        android:layout_above="@id/fab_menu_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/labelFabSearchLinhas"
+            android:text="@string/textLabelFabSearch"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/fab_label_sides_margin"
+            android:layout_marginEnd="@dimen/fab_label_sides_margin"
+            android:padding="@dimen/fabLabelDefaultPadding"
+            android:background="@drawable/rectangle"
+            android:visibility="invisible"
+            android:textSize="@dimen/textSmall"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_search"
+            android:src="@drawable/ic_search_black_24dp"
+            android:backgroundTint="@color/greyButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/fab_small_sides_margin"
+            android:layout_marginEnd="@dimen/fab_small_sides_margin"
+            android:visibility="invisible"
+            app:elevation="@dimen/fab_elevation"
+            app:pressedTranslationZ="12dp"
+            app:borderWidth="0dp"
+            app:fabSize="mini"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fab_menu_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fab_menu_layout_height"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        app:borderWidth="0dp"
-        app:fabSize="normal" />
+        android:layout_marginBottom="@dimen/fab_margin">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_menu"
+            android:src="@drawable/ic_add_black_24dp"
+            android:tint="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginEnd="@dimen/fab_margin"
+            app:elevation="@dimen/fab_elevation"
+            app:borderWidth="0dp"
+            app:fabSize="normal" />
+    </RelativeLayout>
 
 </RelativeLayout>

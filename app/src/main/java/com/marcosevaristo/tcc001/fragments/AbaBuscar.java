@@ -42,6 +42,8 @@ import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 import com.marcosevaristo.tcc001.utils.StringUtils;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +57,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private Boolean isFabOpen = false;
     private FloatingActionButton fabMenu,fabTrocaMunicipio,fabSearch;
+    private TextView labelFabSearch, labelFabTrocaMunicipio;
 
     public AbaBuscar() {}
 
@@ -69,7 +72,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         view = inflater.inflate(R.layout.aba_buscar, container, false);
         ultimaBusca = StringUtils.emptyString();
         setupListLinhas(ultimaBusca);
-        setupFloatingActionButton(view);
+        setupFloatingActionButton();
         return view;
     }
 
@@ -138,10 +141,13 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         };
     }
 
-    private void setupFloatingActionButton(View view) {
+    private void setupFloatingActionButton() {
         fabMenu = (FloatingActionButton) view.findViewById(R.id.fab_menu);
         fabTrocaMunicipio = (FloatingActionButton) view.findViewById(R.id.fab_troca_municipio);
         fabSearch = (FloatingActionButton) view.findViewById(R.id.fab_search);
+
+        labelFabSearch = (TextView) view.findViewById(R.id.labelFabSearchLinhas);
+        labelFabTrocaMunicipio = (TextView) view.findViewById(R.id.labelFabTrocaMunicipio);
 
         fab_open = AnimationUtils.loadAnimation(App.getAppContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(App.getAppContext(),R.anim.fab_close);
@@ -151,6 +157,8 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         fabMenu.setOnClickListener(this);
         fabTrocaMunicipio.setOnClickListener(this);
         fabSearch.setOnClickListener(this);
+        labelFabSearch.setOnClickListener(this);
+        labelFabTrocaMunicipio.setOnClickListener(this);
     }
 
     public void atualizaBusca(boolean executaBusca) {
@@ -182,6 +190,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
             case R.id.fab_menu:
                 break;
             case R.id.fab_search:
+            case R.id.labelFabSearchLinhas:
                 TextInputEditText busca = (TextInputEditText) getActivity().findViewById(R.id.etBusca);
                 InputMethodManager imm = (InputMethodManager) App.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 ((TextInputLayout)busca.getParent().getParent()).setVisibility(View.VISIBLE);
@@ -193,6 +202,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
                 imm.showSoftInput(busca, InputMethodManager.SHOW_IMPLICIT);
                 break;
             case R.id.fab_troca_municipio:
+            case R.id.labelFabTrocaMunicipio:
                 startActivityForResult(new Intent(App.getAppContext(), SelecionaMunicipio.class),0);
                 break;
         }
@@ -201,19 +211,33 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
     public void animateFAB(){
         if(isFabOpen){
             fabMenu.startAnimation(rotate_backward);
+
             fabSearch.startAnimation(fab_close);
+            labelFabSearch.startAnimation(fab_close);
+
             fabTrocaMunicipio.startAnimation(fab_close);
+            labelFabTrocaMunicipio.startAnimation(fab_close);
 
             fabSearch.setClickable(false);
+            labelFabSearch.setClickable(false);
+
             fabTrocaMunicipio.setClickable(false);
+            labelFabTrocaMunicipio.setClickable(false);
             isFabOpen = false;
         } else {
             fabMenu.startAnimation(rotate_forward);
+
             fabSearch.startAnimation(fab_open);
+            labelFabSearch.startAnimation(fab_open);
+
             fabTrocaMunicipio.startAnimation(fab_open);
+            labelFabTrocaMunicipio.startAnimation(fab_open);
 
             fabSearch.setClickable(true);
+            labelFabSearch.setClickable(true);
+
             fabTrocaMunicipio.setClickable(true);
+            labelFabTrocaMunicipio.setClickable(true);
             isFabOpen = true;
         }
     }

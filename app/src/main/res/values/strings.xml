@@ -36,4 +36,6 @@
     <string name="hint_seleciona_municipio">Selecione um município</string>
     <string name="menu_alterar_municipio">Alterar município</string>
     <string name="carregando">Carregando…</string>
+    <string name="textLabelFabTrocaMunicipio">Trocar município</string>
+    <string name="textLabelFabSearch">Pesquisar</string>
 </resources>
