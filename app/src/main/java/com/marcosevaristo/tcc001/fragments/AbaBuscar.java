@@ -99,9 +99,9 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
                     lLinhas = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         String id = umDataSnapshot.getKey();
-                        String numero = umDataSnapshot.child("numero").getValue().toString();
-                        String titulo = umDataSnapshot.child("titulo").getValue().toString();
-                        String subtitulo = umDataSnapshot.child("subtitulo").getValue().toString();
+                        String numero = StringUtils.toStringSecure(umDataSnapshot.child("numero").getValue());
+                        String titulo = StringUtils.toStringSecure(umDataSnapshot.child("titulo").getValue());
+                        String subtitulo = StringUtils.toStringSecure(umDataSnapshot.child("subtitulo").getValue());
 
                         Linha umaLinha = new Linha(id, numero, titulo, subtitulo);
                         umaLinha.setEhFavorito(CollectionUtils.isNotEmpty(QueryBuilder.getFavoritos(umaLinha.getId())));
@@ -247,7 +247,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         if (actionId == EditorInfo.IME_ACTION_SEARCH
                 || actionId == EditorInfo.IME_ACTION_NEXT
                 || actionId == EditorInfo.IME_ACTION_DONE) {
-            setupListLinhas(v.getText().toString());
+            setupListLinhas(StringUtils.toStringSecure(v.getText()));
             return true;
         }
         return false;

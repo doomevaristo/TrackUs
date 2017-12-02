@@ -13,4 +13,8 @@ public class StringUtils {
     public static String emptyString() {
         return "";
     }
+
+    public static String toStringSecure(Object objeto) {
+        return objeto != null ? objeto.toString() : "";
+    }
 }

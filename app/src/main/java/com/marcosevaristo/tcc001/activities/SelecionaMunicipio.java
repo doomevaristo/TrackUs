@@ -17,6 +17,7 @@ import com.marcosevaristo.tcc001.adapters.MunicipiosAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
+import com.marcosevaristo.tcc001.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class SelecionaMunicipio extends AppCompatActivity {
                     lMunicipios = new ArrayList<>();
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         String id = umDataSnapshot.getKey();
-                        String nome = umDataSnapshot.child("nome").getValue().toString();
+                        String nome = StringUtils.toStringSecure(umDataSnapshot.child("nome").getValue());
 
                         Municipio municipio = new Municipio(id, nome);
                         if(App.getMunicipio() != null && municipio.getId().equals(App.getMunicipio().getId())) {

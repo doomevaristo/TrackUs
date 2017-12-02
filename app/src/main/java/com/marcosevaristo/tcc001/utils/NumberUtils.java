@@ -1,5 +1,8 @@
 package com.marcosevaristo.tcc001.utils;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+
 public class NumberUtils {
     public static final Long LONG_ZERO = Long.valueOf(0L);
     public static final Long LONG_ONE = Long.valueOf(1L);
@@ -134,5 +137,22 @@ public class NumberUtils {
         int back = (int) Math.abs(val * (factor)) % factor;
 
         return front + "." + back;
+    }
+
+    public static String formataVelocidade(float metrosPorSegundo, TipoVelocidade tipoVelociadeFormatar) throws ParseException {
+        switch(tipoVelociadeFormatar) {
+            case KMH:
+                DecimalFormat decimalFormat = new DecimalFormat("#");
+
+                return String.valueOf(formataDistancia((float) decimalFormat.parse(String.valueOf(metrosPorSegundo/3.6)))+"/H");
+            case MS:
+                return String.valueOf(formataDistancia(metrosPorSegundo)+"/s");
+        }
+        return null;
+    }
+
+    public enum TipoVelocidade {
+        KMH,
+        MS;
     }
 }

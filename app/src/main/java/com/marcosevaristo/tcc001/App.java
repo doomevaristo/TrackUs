@@ -6,6 +6,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.marcosevaristo.tcc001.database.SQLiteHelper;
 import com.marcosevaristo.tcc001.model.Municipio;
 
@@ -14,6 +17,7 @@ public class App extends Application {
     private static SQLiteHelper sqLiteHelper;
     private static Municipio municipio;
     private static ProgressDialog progressDialog;
+    private static RequestQueue mRequestQueue;
 
     public void onCreate() {
         super.onCreate();
@@ -50,5 +54,17 @@ public class App extends Application {
         if(progressDialog != null) {
             progressDialog.dismiss();
         }
+    }
+
+    public static RequestQueue getReqQueue() {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(context);
+        }
+
+        return mRequestQueue;
+    }
+
+    public static <T> void addToReqQueue(Request<T> req) {
+        getReqQueue().add(req);
     }
 }

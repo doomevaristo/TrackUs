@@ -16,6 +16,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -42,14 +46,23 @@ import com.marcosevaristo.tcc001.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
+import com.marcosevaristo.tcc001.model.StepsObject;
+import com.marcosevaristo.tcc001.model.VolleySingleton;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
-import com.marcosevaristo.tcc001.utils.GoogleMapsUtils;
+import com.marcosevaristo.tcc001.utils.GoogleMapsHelper;
+import com.marcosevaristo.tcc001.utils.MapDirectionsParser;
 import com.marcosevaristo.tcc001.utils.NumberUtils;
+import com.marcosevaristo.tcc001.utils.StringUtils;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Mapa extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -57,6 +70,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     private List<Marker> lMarker;
     private Linha linha;
     private boolean permitiuLocalizacao;
+    Map<Carro, Marker> mCarrosMarkers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,19 +145,19 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                 if(dataSnapshot.exists()) {
                     for(DataSnapshot umDataSnapshot : dataSnapshot.getChildren()) {
                         if(umDataSnapshot.getKey().equals("carros")) {
-                            List<Carro> lCarros = new ArrayList<>();
+                            mCarrosMarkers = new HashMap<>();
                             for(DataSnapshot carroDataSnapshot : umDataSnapshot.getChildren()) {
                                 String id = carroDataSnapshot.getKey();
-                                String latitude = carroDataSnapshot.child("latitude").getValue().toString();
-                                String longitude = carroDataSnapshot.child("longitude").getValue().toString();
-                                String location = carroDataSnapshot.child("location").getValue().toString();
-                                lCarros.add(new Carro(id, latitude, longitude, location));
+                                String latitude = StringUtils.toStringSecure(carroDataSnapshot.child("latitude").getValue());
+                                String longitude = StringUtils.toStringSecure(carroDataSnapshot.child("longitude").getValue());
+                                String location = StringUtils.toStringSecure(carroDataSnapshot.child("location").getValue());
+                                mCarrosMarkers.put(new Carro(id, latitude, longitude, location), null);
                             }
-                            linha.setCarros(lCarros);
+                            linha.setCarros(new ArrayList<>(mCarrosMarkers.keySet()));
                         }
                         if(CollectionUtils.isEmpty(linha.getRota()) && umDataSnapshot.getKey().equals("rota")) {
                             linha.setRota((List<String>) umDataSnapshot.getValue());
-                            gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
+                            gMap.addPolyline(GoogleMapsHelper.desenhaRota((ArrayList<LatLng>) GoogleMapsHelper.getListLatLngFromListString(linha.getRota())));
                         }
                     }
 
@@ -268,7 +282,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            calculaTempoChegadaSetaMarkersTitles(location.getLatitude(), location.getLongitude(), marker);
+                            setaTituloMarker(location.getLatitude(), location.getLongitude(), marker);
                         }
                         App.hideLoadingDialog();
                     }
@@ -281,11 +295,55 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         return false;
     }
 
-    private void calculaTempoChegadaSetaMarkersTitles(double latitudeAtual, double longitudeAtual, Marker marker) {
-        float[] distanciaArr = new float[1];
-        Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, latitudeAtual, longitudeAtual, distanciaArr);
-        Float distancia = distanciaArr[0];
+    private void setaTituloMarker(double latitudeAtual, double longitudeAtual, final Marker marker) {
+        String posicaoAtualStr = String.valueOf(latitudeAtual) + "," + String.valueOf(longitudeAtual);
+        String posicaoCarroStr = String.valueOf(marker.getPosition().latitude) + "," + String.valueOf(marker.getPosition().longitude);
+        String url = GoogleMapsHelper.getUrlSearchRoute(posicaoAtualStr, posicaoCarroStr);
 
-        marker.setTitle(NumberUtils.formataDistancia(distancia));
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        MapDirectionsParser parser = new MapDirectionsParser();
+                        StepsObject stepsObject = parser.parse(response);
+                        if(stepsObject != null) {
+                            StringBuilder sb = new StringBuilder();
+                            if(stepsObject.getDistance() != null){
+                                if(StringUtils.isNotBlank(stepsObject.getDistance().getText())) {
+
+                                }
+                                if(stepsObject.getDistance().getValue() != null) {
+
+                                }
+                            }
+                            if(stepsObject.getDuration() != null) {
+                                if(StringUtils.isNotBlank(stepsObject.getDuration().getText())) {
+
+                                }
+                                if(stepsObject.getDuration().getValue() != null) {
+
+                                }
+                            }
+                            marker.setTitle();
+                        }
+
+                        App.hideLoadingDialog();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        App.hideLoadingDialog();
+                    }
+                });
+        App.addToReqQueue(jsonObjectRequest);
     }
+
+    private void getDirectionsFromMapsApi(double latitudeAtual, double longitudeAtual, final Marker marker) {
+
+    }
+
+
+
+
 }
