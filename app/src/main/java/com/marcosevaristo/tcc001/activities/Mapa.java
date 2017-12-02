@@ -51,7 +51,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
+public class Mapa extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap gMap;
     private List<Marker> lMarker;
@@ -79,6 +79,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
+        gMap.setOnMarkerClickListener(this);
         try{
             gMap.setMyLocationEnabled(permitiuLocalizacao);
         } catch (SecurityException e) {
@@ -140,13 +141,10 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                             }
                             linha.setCarros(lCarros);
                         }
-                        if(umDataSnapshot.getKey().equals("rota")) {
+                        if(CollectionUtils.isEmpty(linha.getRota()) && umDataSnapshot.getKey().equals("rota")) {
                             linha.setRota((List<String>) umDataSnapshot.getValue());
+                            gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
                         }
-                    }
-
-                    if(CollectionUtils.isNotEmpty(linha.getRota())) {
-                        gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
                     }
 
                     if(CollectionUtils.isNotEmpty(lMarker)) {
@@ -178,20 +176,6 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                         .position(posicaoUmCarro)
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
                 lMarker.add(gMap.addMarker(umMarker));
-            }
-
-            if(permitiuLocalizacao) {
-                try {
-                    FusedLocationProviderClient mFusedLocationClient = new FusedLocationProviderClient(Mapa.this);
-                    mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                calculaTempoChegadaSetaMarkersTitles(location.getLatitude(), location.getLongitude());
-                            }
-                        }
-                    });
-                } catch (SecurityException e) {e.printStackTrace();}
             }
         }
     }
@@ -237,18 +221,6 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-    private void calculaTempoChegadaSetaMarkersTitles(double latitudeAtual, double longitudeAtual) {
-        if(CollectionUtils.isNotEmpty(lMarker)) {
-            for(Marker umMarker : lMarker) {
-                float[] distanciaArr = new float[1];
-                Location.distanceBetween(umMarker.getPosition().latitude, umMarker.getPosition().longitude, latitudeAtual, longitudeAtual, distanciaArr);
-                Float distancia = distanciaArr[0];
-
-                umMarker.setTitle(NumberUtils.formataDistancia(distancia));
-            }
-        }
-    }
-
     public void verificaPermissoes() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -284,5 +256,36 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        if(permitiuLocalizacao) {
+            App.showLoadingDialog(this);
+            try {
+                FusedLocationProviderClient mFusedLocationClient = new FusedLocationProviderClient(this);
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            calculaTempoChegadaSetaMarkersTitles(location.getLatitude(), location.getLongitude(), marker);
+                        }
+                        App.hideLoadingDialog();
+                    }
+                });
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                App.hideLoadingDialog();
+            }
+        }
+        return false;
+    }
+
+    private void calculaTempoChegadaSetaMarkersTitles(double latitudeAtual, double longitudeAtual, Marker marker) {
+        float[] distanciaArr = new float[1];
+        Location.distanceBetween(marker.getPosition().latitude, marker.getPosition().longitude, latitudeAtual, longitudeAtual, distanciaArr);
+        Float distancia = distanciaArr[0];
+
+        marker.setTitle(NumberUtils.formataDistancia(distancia));
     }
 }
