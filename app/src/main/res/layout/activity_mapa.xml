@@ -9,12 +9,14 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/toolbar_map_layout"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <include
             layout="@layout/toolbar_map"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:id="@+id/toolbar_inc_map"/>
+
 
     </android.support.design.widget.AppBarLayout>
 
@@ -24,6 +26,77 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.marcosevaristo.tcc001.activities.Mapa"
-        android:layout_marginTop="@dimen/marginTopComAppBar">
+        android:layout_below="@id/toolbar_map_layout">
     </fragment>
+
+    <RelativeLayout
+        android:id="@+id/carroInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/carroInfoLayoutHeight"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimaryDark"
+        android:visibility="invisible"
+        android:elevation="@dimen/window_elevation">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/carroInfoProgressBar"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="@dimen/carroInfoLabelsWidth"
+            android:layout_height="wrap_content"
+            android:id="@+id/textDistanciaLabel"
+            android:textSize="@dimen/textExtraSmall"
+            android:lines="2"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textAlignment="center"
+            android:layout_marginLeft="@dimen/carroInfoLabelsMargin"
+            android:layout_marginStart="@dimen/carroInfoLabelsMargin"
+            android:text="@string/distancia_aproximada"/>
+
+        <TextView
+            android:layout_width="@dimen/carroInfoLabelsWidth"
+            android:layout_height="wrap_content"
+            android:id="@+id/textTempoLabel"
+            android:textSize="@dimen/textExtraSmall"
+            android:lines="2"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textAlignment="center"
+            android:layout_marginRight="@dimen/carroInfoLabelsMargin"
+            android:layout_marginEnd="@dimen/carroInfoLabelsMargin"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/tempo_aproximado"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textDistancia"
+            android:textSize="@dimen/carroInfoTextSize"
+            android:textAlignment="center"
+            android:layout_alignLeft="@id/textDistanciaLabel"
+            android:layout_alignStart="@id/textDistanciaLabel"
+            android:layout_alignRight="@id/textDistanciaLabel"
+            android:layout_alignEnd="@id/textDistanciaLabel"
+            android:layout_below="@id/textDistanciaLabel"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textTempo"
+            android:textSize="@dimen/carroInfoTextSize"
+            android:textAlignment="center"
+            android:layout_alignLeft="@id/textTempoLabel"
+            android:layout_alignStart="@id/textTempoLabel"
+            android:layout_alignRight="@id/textTempoLabel"
+            android:layout_alignEnd="@id/textTempoLabel"
+            android:layout_below="@id/textTempoLabel"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

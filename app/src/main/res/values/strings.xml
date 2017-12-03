@@ -38,6 +38,6 @@
     <string name="textLabelFabTrocaMunicipio">Trocar município</string>
     <string name="textLabelFabSearch">Pesquisar</string>
 
-    <string name="distancia_aproximada">Distância aproximada: %1$s</string>
-    <string name="tempo_aproximado">Tempo estimado até sua localização: %1$s</string>
+    <string name="distancia_aproximada">Distância aproximada</string>
+    <string name="tempo_aproximado">Tempo estimado até seu local</string>
 </resources>

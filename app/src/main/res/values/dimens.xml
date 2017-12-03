@@ -30,5 +30,11 @@
     <dimen name="menuButtonSize">30dp</dimen>
     <dimen name="textDefaultSize">22sp</dimen>
     <dimen name="textSmall">16sp</dimen>
+    <dimen name="textExtraSmall">12sp</dimen>
     <dimen name="fieldDefaultPadding">10dp</dimen>
+    <dimen name="carroInfoLayoutHeight">80dp</dimen>
+    <dimen name="window_elevation">4dp</dimen>
+    <dimen name="carroInfoLabelsWidth">120dp</dimen>
+    <dimen name="carroInfoLabelsMargin">50dp</dimen>
+    <dimen name="carroInfoTextSize">30sp</dimen>
 </resources>

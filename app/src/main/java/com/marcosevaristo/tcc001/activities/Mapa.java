@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,6 +16,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -47,30 +54,33 @@ import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.StepsObject;
-import com.marcosevaristo.tcc001.model.VolleySingleton;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
 import com.marcosevaristo.tcc001.utils.GoogleMapsHelper;
 import com.marcosevaristo.tcc001.utils.MapDirectionsParser;
-import com.marcosevaristo.tcc001.utils.NumberUtils;
 import com.marcosevaristo.tcc001.utils.StringUtils;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Mapa extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class Mapa extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener{
 
     private GoogleMap gMap;
     private List<Marker> lMarker;
     private Linha linha;
     private boolean permitiuLocalizacao;
-    Map<Carro, Marker> mCarrosMarkers;
+    private Map<Carro, Marker> mCarrosMarkers;
+
+    private ProgressBar progressBarCarroInfo;
+    private TextView carroInfoDistancia, carroInfoTempo;
+    private Animation carroInfoOpen,carroInfoClose;
+    private RelativeLayout carroInfoLayout;
+    private boolean isCarroInfoOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,9 +124,18 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     }
 
     private void setaObjetosIniciaisNoMapa() {
+        setaCarroInfoObjects();
         if (linha != null) {
             FirebaseUtils.getLinhasReference(App.getMunicipio().getId(), linha.getId()).addValueEventListener(getEventoFirebaseGetLinha());
         }
+    }
+
+    private void setaCarroInfoObjects() {
+        carroInfoLayout = (RelativeLayout) findViewById(R.id.carroInfoLayout);
+        carroInfoOpen = AnimationUtils.loadAnimation(App.getAppContext(), R.anim.carroinfo_open);
+        carroInfoClose = AnimationUtils.loadAnimation(App.getAppContext(), R.anim.carroinfo_close);
+        carroInfoDistancia = (TextView) findViewById(R.id.textDistancia);
+        carroInfoTempo = (TextView) findViewById(R.id.textTempo);
     }
 
     private void moveCameraParaMunicipio() {
@@ -275,7 +294,10 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     @Override
     public boolean onMarkerClick(final Marker marker) {
         if(permitiuLocalizacao) {
-            App.showLoadingDialog(this);
+            progressBarCarroInfo = (ProgressBar) findViewById(R.id.carroInfoProgressBar);
+            progressBarCarroInfo.setVisibility(View.VISIBLE);
+            progressBarCarroInfo.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+
             try {
                 FusedLocationProviderClient mFusedLocationClient = new FusedLocationProviderClient(this);
                 mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
@@ -284,12 +306,11 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                         if (location != null) {
                             setaTituloMarker(location.getLatitude(), location.getLongitude(), marker);
                         }
-                        App.hideLoadingDialog();
                     }
                 });
             } catch (SecurityException e) {
                 e.printStackTrace();
-                App.hideLoadingDialog();
+                progressBarCarroInfo.setVisibility(View.GONE);
             }
         }
         return false;
@@ -308,26 +329,14 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                         StepsObject stepsObject = parser.parse(response);
                         if(stepsObject != null) {
                             StringBuilder sb = new StringBuilder();
-                            if(stepsObject.getDistance() != null){
-                                if(StringUtils.isNotBlank(stepsObject.getDistance().getText())) {
-
-                                }
-                                if(stepsObject.getDistance().getValue() != null) {
-
-                                }
+                            if(stepsObject.getDistance() != null && StringUtils.isNotBlank(stepsObject.getDistance().getText())){
+                                carroInfoDistancia.setText(stepsObject.getDistance().getText());
                             }
-                            if(stepsObject.getDuration() != null) {
-                                if(StringUtils.isNotBlank(stepsObject.getDuration().getText())) {
-
-                                }
-                                if(stepsObject.getDuration().getValue() != null) {
-
-                                }
+                            if(stepsObject.getDuration() != null && StringUtils.isNotBlank(stepsObject.getDuration().getText())) {
+                                carroInfoTempo.setText(stepsObject.getDuration().getText());
                             }
-                            marker.setTitle();
                         }
-
-                        App.hideLoadingDialog();
+                        progressBarCarroInfo.setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {
@@ -339,11 +348,20 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         App.addToReqQueue(jsonObjectRequest);
     }
 
-    private void getDirectionsFromMapsApi(double latitudeAtual, double longitudeAtual, final Marker marker) {
-
+    public void animateCarroInfo(){
+        if(isCarroInfoOpen){
+            carroInfoLayout.startAnimation(carroInfoClose);
+            isCarroInfoOpen = false;
+        } else {
+            carroInfoLayout.startAnimation(carroInfoOpen);
+            isCarroInfoOpen = true;
+        }
     }
 
-
-
-
+    @Override
+    public void onMapClick(LatLng latLng) {
+        if(isCarroInfoOpen) {
+            animateCarroInfo();
+        }
+    }
 }

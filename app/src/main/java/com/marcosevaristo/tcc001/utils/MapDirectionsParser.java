@@ -32,27 +32,25 @@ public class MapDirectionsParser {
 
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
-                List<HashMap<String, String>> path = new ArrayList<HashMap<String, String>>();
-
                 for (int j = 0; j < jLegs.length(); j++) {
-                    String durationText = "";
-                    String durationValue = "";
-                    String distanceText = "";
-                    String distanceValue = "";
+                    String durationText;
+                    Integer durationValue;
+                    String distanceText;
+                    Integer distanceValue;
 
                     durationText = (String) ((JSONObject) ((JSONObject) jLegs
                             .get(j)).get("duration")).get("text");
-                    durationValue = (String) ((JSONObject) ((JSONObject) jLegs
+                    durationValue = (Integer) ((JSONObject) ((JSONObject) jLegs
                             .get(j)).get("duration")).get("value");
 
-                    stepsObject.setDuration(new DurationObject(durationText, Integer.parseInt(durationValue)));
+                    stepsObject.setDuration(new DurationObject(durationText, durationValue));
 
                     distanceText = (String) ((JSONObject) ((JSONObject) jLegs
                             .get(j)).get("distance")).get("text");
-                    distanceValue = (String) ((JSONObject) ((JSONObject) jLegs
+                    distanceValue = (Integer) ((JSONObject) ((JSONObject) jLegs
                             .get(j)).get("distance")).get("value");
 
-                    stepsObject.setDistance(new DistanceObject(distanceText, Integer.parseInt(distanceValue)));
+                    stepsObject.setDistance(new DistanceObject(distanceText, distanceValue));
                     stepsObject.setLocation((String) ((JSONObject) jLegs.get(j)).get("end_address"));
                 }
             }

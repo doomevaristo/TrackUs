@@ -9,6 +9,7 @@
     <color name="redButtons">#f44336</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 
     <color name="municipioAtualDetColor">#E0E0E0</color>
 </resources>
