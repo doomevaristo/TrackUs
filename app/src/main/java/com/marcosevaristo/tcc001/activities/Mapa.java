@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -104,6 +105,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
         gMap.setOnMarkerClickListener(this);
+        gMap.setOnMapClickListener(this);
         try{
             gMap.setMyLocationEnabled(permitiuLocalizacao);
         } catch (SecurityException e) {
@@ -136,6 +138,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         carroInfoClose = AnimationUtils.loadAnimation(App.getAppContext(), R.anim.carroinfo_close);
         carroInfoDistancia = (TextView) findViewById(R.id.textDistancia);
         carroInfoTempo = (TextView) findViewById(R.id.textTempo);
+        progressBarCarroInfo = (ProgressBar) findViewById(R.id.carroInfoProgressBar);
     }
 
     private void moveCameraParaMunicipio() {
@@ -185,6 +188,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                     }
                     populaMarkersDoMapaComCarros(linha.getCarros());
                 }
+                if(isCarroInfoOpen) animateCarroInfo();
             }
 
             @Override
@@ -292,65 +296,24 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     }
 
     @Override
-    public boolean onMarkerClick(final Marker marker) {
+    public boolean onMarkerClick(Marker marker) {
         if(permitiuLocalizacao) {
-            progressBarCarroInfo = (ProgressBar) findViewById(R.id.carroInfoProgressBar);
-            progressBarCarroInfo.setVisibility(View.VISIBLE);
-            progressBarCarroInfo.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-
-            try {
-                FusedLocationProviderClient mFusedLocationClient = new FusedLocationProviderClient(this);
-                mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            setaTituloMarker(location.getLatitude(), location.getLongitude(), marker);
-                        }
-                    }
-                });
-            } catch (SecurityException e) {
-                e.printStackTrace();
-                progressBarCarroInfo.setVisibility(View.GONE);
+            if(!isCarroInfoOpen) {
+                animateCarroInfo();
             }
+            new CarregaCarroInfo(marker).execute();
         }
         return false;
     }
 
-    private void setaTituloMarker(double latitudeAtual, double longitudeAtual, final Marker marker) {
-        String posicaoAtualStr = String.valueOf(latitudeAtual) + "," + String.valueOf(longitudeAtual);
-        String posicaoCarroStr = String.valueOf(marker.getPosition().latitude) + "," + String.valueOf(marker.getPosition().longitude);
-        String url = GoogleMapsHelper.getUrlSearchRoute(posicaoAtualStr, posicaoCarroStr);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        MapDirectionsParser parser = new MapDirectionsParser();
-                        StepsObject stepsObject = parser.parse(response);
-                        if(stepsObject != null) {
-                            StringBuilder sb = new StringBuilder();
-                            if(stepsObject.getDistance() != null && StringUtils.isNotBlank(stepsObject.getDistance().getText())){
-                                carroInfoDistancia.setText(stepsObject.getDistance().getText());
-                            }
-                            if(stepsObject.getDuration() != null && StringUtils.isNotBlank(stepsObject.getDuration().getText())) {
-                                carroInfoTempo.setText(stepsObject.getDuration().getText());
-                            }
-                        }
-                        progressBarCarroInfo.setVisibility(View.GONE);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        App.hideLoadingDialog();
-                    }
-                });
-        App.addToReqQueue(jsonObjectRequest);
-    }
 
     public void animateCarroInfo(){
         if(isCarroInfoOpen){
             carroInfoLayout.startAnimation(carroInfoClose);
+            carroInfoDistancia.setText(StringUtils.emptyString());
+            carroInfoTempo.setText(StringUtils.emptyString());
+
             isCarroInfoOpen = false;
         } else {
             carroInfoLayout.startAnimation(carroInfoOpen);
@@ -362,6 +325,76 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     public void onMapClick(LatLng latLng) {
         if(isCarroInfoOpen) {
             animateCarroInfo();
+        }
+    }
+
+    public class CarregaCarroInfo extends AsyncTask<Void, Void, Void> {
+
+        private Marker carroMarker;
+
+        CarregaCarroInfo(Marker carroMarker) {
+            this.carroMarker = carroMarker;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                FusedLocationProviderClient mFusedLocationClient = new FusedLocationProviderClient(Mapa.this);
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(Mapa.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            setaCarroInfo(location.getLatitude(), location.getLongitude(), carroMarker);
+                        }
+                    }
+                });
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            progressBarCarroInfo.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBarCarroInfo.setVisibility(View.VISIBLE);
+            progressBarCarroInfo.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        }
+
+        private void setaCarroInfo(double latitudeAtual, double longitudeAtual, final Marker marker) {
+            String posicaoCarroStr = String.valueOf(marker.getPosition().latitude) + "," + String.valueOf(marker.getPosition().longitude);
+            String posicaoAtualStr = String.valueOf(latitudeAtual) + "," + String.valueOf(longitudeAtual);
+            String url = GoogleMapsHelper.getUrlSearchRoute(posicaoCarroStr, posicaoAtualStr);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            MapDirectionsParser parser = new MapDirectionsParser();
+                            StepsObject stepsObject = parser.parse(response);
+                            if(stepsObject != null) {
+                                if(stepsObject.getDistance() != null && StringUtils.isNotBlank(stepsObject.getDistance().getText())){
+                                    carroInfoDistancia.setText(stepsObject.getDistance().getText());
+                                }
+                                if(stepsObject.getDuration() != null && StringUtils.isNotBlank(stepsObject.getDuration().getText())) {
+                                    carroInfoTempo.setText(stepsObject.getDuration().getText());
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            App.hideLoadingDialog();
+                        }
+                    });
+            App.addToReqQueue(jsonObjectRequest);
         }
     }
 }
