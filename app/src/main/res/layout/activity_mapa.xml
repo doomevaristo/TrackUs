@@ -38,13 +38,6 @@
         android:visibility="invisible"
         android:elevation="@dimen/window_elevation">
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:id="@+id/carroInfoProgressBar"
-            android:visibility="invisible"/>
-
         <TextView
             android:layout_width="@dimen/carroInfoLabelsWidth"
             android:layout_height="wrap_content"

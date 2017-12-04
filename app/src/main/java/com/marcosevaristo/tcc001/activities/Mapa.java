@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,10 +15,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -77,7 +73,6 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
     private boolean permitiuLocalizacao;
     private Map<Carro, Marker> mCarrosMarkers;
 
-    private ProgressBar progressBarCarroInfo;
     private TextView carroInfoDistancia, carroInfoTempo;
     private Animation carroInfoOpen,carroInfoClose;
     private RelativeLayout carroInfoLayout;
@@ -138,7 +133,6 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         carroInfoClose = AnimationUtils.loadAnimation(App.getAppContext(), R.anim.carroinfo_close);
         carroInfoDistancia = (TextView) findViewById(R.id.textDistancia);
         carroInfoTempo = (TextView) findViewById(R.id.textTempo);
-        progressBarCarroInfo = (ProgressBar) findViewById(R.id.carroInfoProgressBar);
     }
 
     private void moveCameraParaMunicipio() {
@@ -357,14 +351,13 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            progressBarCarroInfo.setVisibility(View.GONE);
+            App.hideLoadingDialog();
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressBarCarroInfo.setVisibility(View.VISIBLE);
-            progressBarCarroInfo.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            App.showLoadingDialog(Mapa.this);
         }
 
         private void setaCarroInfo(double latitudeAtual, double longitudeAtual, final Marker marker) {
