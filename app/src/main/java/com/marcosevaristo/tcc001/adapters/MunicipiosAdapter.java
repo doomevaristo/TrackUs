@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.marcosevaristo.tcc001.App;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.StringUtils;

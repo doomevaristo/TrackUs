@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-import com.marcosevaristo.tcc001.App;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.adapters.ViewPagerAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;

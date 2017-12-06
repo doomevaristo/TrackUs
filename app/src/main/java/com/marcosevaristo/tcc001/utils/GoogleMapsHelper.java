@@ -1,16 +1,11 @@
 package com.marcosevaristo.tcc001.utils;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.marcosevaristo.tcc001.App;
-import com.marcosevaristo.tcc001.R;
 
 import java.util.ArrayList;
 import java.util.List;

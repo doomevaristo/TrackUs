@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.marcosevaristo.tcc001.App;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.Municipio;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;

@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.marcosevaristo.tcc001.App;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.adapters.MunicipiosAdapter;
 import com.marcosevaristo.tcc001.database.QueryBuilder;

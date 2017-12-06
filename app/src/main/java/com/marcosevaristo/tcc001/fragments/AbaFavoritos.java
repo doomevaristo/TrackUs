@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.marcosevaristo.tcc001.App;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.activities.Mapa;
 import com.marcosevaristo.tcc001.adapters.LinhasAdapter;

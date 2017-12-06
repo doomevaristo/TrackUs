@@ -2,7 +2,6 @@ package com.marcosevaristo.tcc001.utils;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.marcosevaristo.tcc001.App;
 
 public class FirebaseUtils {
 
