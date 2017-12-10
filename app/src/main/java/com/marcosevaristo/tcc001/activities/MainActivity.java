@@ -1,7 +1,6 @@
 package com.marcosevaristo.tcc001.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -9,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
 import com.marcosevaristo.tcc001.adapters.ViewPagerAdapter;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.fragments.AbaBuscar;
 import com.marcosevaristo.tcc001.fragments.AbaFavoritos;
@@ -47,16 +46,6 @@ public class MainActivity extends AppCompatActivity {
             setupToolbar();
             setupTabLayout();
         }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
     }
 
     private void setupToolbar() {

@@ -8,7 +8,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static SQLiteHelper sInstance;
     private static int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "FAVORITOS";
+    private static final String DATABASE_NAME = "TRACKUS";
 
     public static synchronized SQLiteHelper getInstance(Context context) {
         if (sInstance == null) {

@@ -7,9 +7,8 @@ public class FirebaseUtils {
 
     private static FirebaseDatabase database;
 
-    public static final String NODE_MUNICIPIOS = "municipios";
-    public static final String NODE_LINHAS = "linhas";
-    public static final String NODE_CARROS = "carros";
+    private static final String NODE_MUNICIPIOS = "municipios";
+    private static final String NODE_LINHAS = "linhas";
 
     public static FirebaseDatabase getDatabase() {
         if(database == null) {
@@ -32,16 +31,5 @@ public class FirebaseUtils {
             databaseReferenceLinhas = databaseReferenceLinhas.child(linhaID);
         }
         return databaseReferenceLinhas;
-    }
-
-    public static DatabaseReference getCarrosReference(String municipioID, String linhaID, String carroID) {
-        DatabaseReference databaseReferenceCarros = null;
-        if(StringUtils.isNotBlank(linhaID)) {
-            databaseReferenceCarros = getLinhasReference(municipioID, linhaID).child(NODE_CARROS);
-            if(StringUtils.isNotBlank(carroID)) {
-                databaseReferenceCarros = databaseReferenceCarros.child(carroID);
-            }
-        }
-        return databaseReferenceCarros;
     }
 }

@@ -9,8 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.components.BotaoFavorito;
 import com.marcosevaristo.tcc001.database.QueryBuilder;
 import com.marcosevaristo.tcc001.model.Linha;

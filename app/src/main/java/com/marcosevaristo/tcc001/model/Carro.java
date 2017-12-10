@@ -1,9 +1,6 @@
 package com.marcosevaristo.tcc001.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class Carro implements Serializable{
     private String id;

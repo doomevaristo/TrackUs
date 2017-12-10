@@ -46,14 +46,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.R;
+import com.marcosevaristo.tcc001.app.App;
 import com.marcosevaristo.tcc001.model.Carro;
 import com.marcosevaristo.tcc001.model.Linha;
 import com.marcosevaristo.tcc001.model.StepsObject;
 import com.marcosevaristo.tcc001.utils.CollectionUtils;
 import com.marcosevaristo.tcc001.utils.FirebaseUtils;
-import com.marcosevaristo.tcc001.utils.GoogleMapsHelper;
+import com.marcosevaristo.tcc001.utils.GoogleMapsUtils;
 import com.marcosevaristo.tcc001.utils.MapDirectionsParser;
 import com.marcosevaristo.tcc001.utils.StringUtils;
 
@@ -173,7 +173,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                         }
                         if(CollectionUtils.isEmpty(linha.getRota()) && umDataSnapshot.getKey().equals("rota")) {
                             linha.setRota((List<String>) umDataSnapshot.getValue());
-                            gMap.addPolyline(GoogleMapsHelper.desenhaRota((ArrayList<LatLng>) GoogleMapsHelper.getListLatLngFromListString(linha.getRota())));
+                            gMap.addPolyline(GoogleMapsUtils.desenhaRota((ArrayList<LatLng>) GoogleMapsUtils.getListLatLngFromListString(linha.getRota())));
                         }
                     }
 
@@ -300,9 +300,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         return false;
     }
 
-
-
-    public void animateCarroInfo(){
+    private void animateCarroInfo(){
         if(isCarroInfoOpen){
             carroInfoLayout.startAnimation(carroInfoClose);
             carroInfoDistancia.setText(StringUtils.emptyString());
@@ -363,7 +361,7 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
         private void setaCarroInfo(double latitudeAtual, double longitudeAtual, final Marker marker) {
             String posicaoCarroStr = String.valueOf(marker.getPosition().latitude) + "," + String.valueOf(marker.getPosition().longitude);
             String posicaoAtualStr = String.valueOf(latitudeAtual) + "," + String.valueOf(longitudeAtual);
-            String url = GoogleMapsHelper.getUrlSearchRoute(posicaoCarroStr, posicaoAtualStr);
+            String url = GoogleMapsUtils.getUrlSearchRoute(posicaoCarroStr, posicaoAtualStr);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
