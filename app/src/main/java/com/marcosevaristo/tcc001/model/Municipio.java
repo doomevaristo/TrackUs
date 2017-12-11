@@ -11,7 +11,6 @@ public class Municipio implements Serializable {
     private String nome;
     private Map<String, Linha> linhas;
     private boolean ehMunicipioAtual;
-    private boolean selecionado = false;
 
     public Municipio(){}
 
