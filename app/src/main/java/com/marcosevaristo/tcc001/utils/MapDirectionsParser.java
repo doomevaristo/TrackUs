@@ -47,7 +47,6 @@ public class MapDirectionsParser {
                             .get(j)).get("distance")).get("value");
 
                     stepsObject.setDistance(new DistanceObject(distanceText, distanceValue));
-                    stepsObject.setLocation((String) ((JSONObject) jLegs.get(j)).get("end_address"));
                 }
             }
         } catch (JSONException e) {

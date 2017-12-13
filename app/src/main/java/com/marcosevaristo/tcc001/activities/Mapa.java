@@ -205,7 +205,8 @@ public class Mapa extends AppCompatActivity implements OnMapReadyCallback, Googl
                 LatLng posicaoUmCarro = new LatLng(Double.parseDouble(umCarro.getLatitude()), Double.parseDouble(umCarro.getLongitude()));
                 MarkerOptions umMarker = new MarkerOptions()
                         .position(posicaoUmCarro)
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker));
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_bus_marker))
+                        .title(umCarro.getLocation());
                 lMarker.add(gMap.addMarker(umMarker));
             }
         }
