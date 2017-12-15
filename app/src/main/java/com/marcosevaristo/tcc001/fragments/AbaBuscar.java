@@ -76,7 +76,6 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
 
         lView = (ListView) view.findViewById(R.id.listaLinhas);
         lView.setAdapter(null);
-        lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
 
         Query query = FirebaseUtils.getLinhasReference(App.getMunicipio().getId(), null).orderByChild("numero");
         if(StringUtils.isNotBlank(argBusca)){
@@ -121,6 +120,7 @@ public class AbaBuscar extends Fragment implements View.OnClickListener, EditTex
         LinhasAdapter adapter = new LinhasAdapter(R.layout.item_da_busca, lLinhas);
         adapter.notifyDataSetChanged();
         lView.setAdapter(adapter);
+        lView.setOnItemClickListener(getOnItemClickListenerOpenMap());
     }
 
     private AdapterView.OnItemClickListener getOnItemClickListenerOpenMap() {
