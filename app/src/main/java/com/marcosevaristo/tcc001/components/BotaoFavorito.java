@@ -32,8 +32,6 @@ public class BotaoFavorito extends ImageView {
     private static final int DEFAULT_BOUNCE_DURATION = 300;
     private static final int FAVORITE_STAR_BLACK = R.mipmap.ic_star_black;
     private static final int FAVORITE_STAR_BORDER_BLACK = R.mipmap.ic_star_black_border;
-    private static final int FAVORITE_HEART_BLACK = R.mipmap.ic_favorite_black;
-    private static final int FAVORITE_HEART_BORDER_BLACK = R.mipmap.ic_favorite_black_border;
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
@@ -126,7 +124,8 @@ public class BotaoFavorito extends ImageView {
                     mFavoriteResource = attr.getResourceId(R.styleable.BotaoFavorito_fav_favorite_image, FAVORITE_STAR_BLACK);
                     mNotFavoriteResource = attr.getResourceId(R.styleable.BotaoFavorito_fav_not_favorite_image, FAVORITE_STAR_BORDER_BLACK);
                 } else {
-                    setTheme(attr.getInt(R.styleable.BotaoFavorito_fav_type, STYLE_STAR));
+                    mFavoriteResource = FAVORITE_STAR_BLACK;
+                    mNotFavoriteResource = FAVORITE_STAR_BORDER_BLACK;
                 }
 
                 mRotationDuration = attr.getInt(R.styleable.BotaoFavorito_fav_rotation_duration, mRotationDuration);
@@ -140,16 +139,6 @@ public class BotaoFavorito extends ImageView {
 
     private TypedArray getTypedArray(Context context, AttributeSet attributeSet, int[] attr) {
         return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
-    }
-
-    private void setTheme(int type) {
-        if (type == STYLE_STAR) {
-            mFavoriteResource = FAVORITE_STAR_BLACK;
-            mNotFavoriteResource = FAVORITE_STAR_BORDER_BLACK;
-        } else {
-            mFavoriteResource = FAVORITE_HEART_BLACK;
-            mNotFavoriteResource = FAVORITE_HEART_BORDER_BLACK;
-        }
     }
 
     private void setResources() {
@@ -428,6 +417,7 @@ public class BotaoFavorito extends ImageView {
 
     public void setType(int type) {
         this.mType = type;
-        setTheme(type);
+        mFavoriteResource = FAVORITE_STAR_BLACK;
+        mNotFavoriteResource = FAVORITE_STAR_BORDER_BLACK;
     }
 }
